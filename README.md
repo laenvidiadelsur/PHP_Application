@@ -1,59 +1,57 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Admin LTA - Configuración Rápida
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Proyecto Laravel enfocado en la administración de licencias de tránsito (LTA) con panel dedicado y dominio LTA modular.
 
-## About Laravel
+### Requisitos
+- PHP 8.2+ con extensión `pdo_pgsql`
+- Composer y Node.js (v18+ recomendado)
+- PostgreSQL 13+
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Instalación básica
+1. `composer install`
+2. `npm install`
+3. Copia `.env.example` a `.env` y genera la APP key:
+   ```bash
+   php artisan key:generate
+   ```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Conexión a PostgreSQL
+Actualiza tu `.env` con los datos del servidor:
+```
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=admin_lta
+DB_USERNAME=postgres
+DB_PASSWORD=secret
+DB_SCHEMA=public
+```
+Si usas SSL, agrega `DB_SSLMODE=require`. Luego limpia la caché de configuración:
+```bash
+php artisan config:clear
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Migraciones y seeders
+```bash
+php artisan migrate
+php artisan db:seed
+```
+Esto crea la estructura de LTA (fundaciones, proveedores, productos, carritos, órdenes) y un usuario admin demo (`admin@example.com` / `password`).
 
-## Learning Laravel
+### Assets y servidor
+```bash
+npm run dev    # ó npm run build para producción
+php artisan serve
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Scripts útiles
+- `php artisan migrate:fresh --seed` reinicia el esquema completo.
+- `php artisan queue:work` procesa los jobs como `SyncLicenciasJob`.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Estructura Destacada
+- `app/Domain/Lta` dominio principal
+- `app/Http/Controllers/Admin` panel administrativo
+- `resources/views/admin` vistas y layout del panel
+- `database/migrations/*_lta_*.php` migraciones específicas de negocio
 
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Para más personalización revisa los archivos en `config/admin.php` y `config/database.php`.
