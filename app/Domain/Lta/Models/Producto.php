@@ -7,36 +7,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Producto extends Model
 {
-    protected $table = 'producto';
+    protected $table = 'test.products';
+
+    public $timestamps = false;
 
     protected $fillable = [
-        'nombre',
-        'descripcion',
-        'precio',
-        'unidad',
-        'stock',
-        'categoria',
-        'proveedor_id',
-        'fundacion_id',
-        'estado',
+        'supplier_id',
+        'category_id',
+        'name',
+        'description',
+        'price',
+        'status',
     ];
 
     protected $casts = [
-        'precio' => 'decimal:2',
-        'stock' => 'integer',
+        'price' => 'decimal:2',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime',
     ];
 
-    public function proveedor(): BelongsTo
+    public function supplier(): BelongsTo
     {
-        return $this->belongsTo(Proveedor::class);
+        return $this->belongsTo(Proveedor::class, 'supplier_id');
     }
 
-    public function fundacion(): BelongsTo
+    public function category(): BelongsTo
     {
-        return $this->belongsTo(Fundacion::class);
+        return $this->belongsTo(Category::class);
     }
 }
-
-

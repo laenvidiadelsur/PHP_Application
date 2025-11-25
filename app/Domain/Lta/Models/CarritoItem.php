@@ -7,30 +7,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CarritoItem extends Model
 {
-    protected $table = 'carrito_item';
+    protected $table = 'test.cart_items';
+
+    public $timestamps = false;
 
     protected $fillable = [
-        'carrito_id',
-        'producto_id',
-        'cantidad',
-        'precio_unitario',
-        'subtotal',
+        'cart_id',
+        'product_id',
+        'quantity',
     ];
 
     protected $casts = [
-        'cantidad' => 'integer',
-        'precio_unitario' => 'decimal:2',
-        'subtotal' => 'decimal:2',
+        'quantity' => 'integer',
     ];
 
-    public function carrito(): BelongsTo
+    public function cart(): BelongsTo
     {
-        return $this->belongsTo(Carrito::class);
+        return $this->belongsTo(Carrito::class, 'cart_id');
     }
 
-    public function producto(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(Producto::class);
+        return $this->belongsTo(Producto::class, 'product_id');
     }
 }
-

@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\CarritoController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FundacionController;
-use App\Http\Controllers\Admin\LicenciaController;
 use App\Http\Controllers\Admin\OrdenController;
+use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ProductoController;
 use App\Http\Controllers\Admin\ProveedorController;
 use App\Http\Controllers\Admin\UsuarioController;
@@ -37,8 +38,9 @@ Route::prefix('admin')
         Route::resource('productos', ProductoController::class)
             ->parameters(['productos' => 'producto'])
             ->except('show');
-        Route::resource('licencias', LicenciaController::class)
-            ->parameters(['licencias' => 'licencia']);
+        Route::resource('categories', CategoryController::class)
+            ->parameters(['categories' => 'category'])
+            ->except('show');
         Route::resource('usuarios', UsuarioController::class)
             ->parameters(['usuarios' => 'usuario']);
         Route::resource('carritos', CarritoController::class)
@@ -47,4 +49,7 @@ Route::prefix('admin')
         Route::resource('ordenes', OrdenController::class)
             ->parameters(['ordenes' => 'orden'])
             ->except(['create', 'store']);
+        Route::resource('payments', PaymentController::class)
+            ->parameters(['payments' => 'payment']);
     });
+
