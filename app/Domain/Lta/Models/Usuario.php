@@ -2,28 +2,30 @@
 
 namespace App\Domain\Lta\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Hash;
 
-class Usuario extends Model
+class Usuario extends Authenticatable
 {
     protected $table = 'test.users';
 
     protected $fillable = [
         'name',
         'email',
-        'password_hash',
-        'phone',
+        'password',
+        'is_admin',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'is_admin' => 'boolean',
     ];
 
     protected $hidden = [
-        'password_hash',
+        'password',
+        'remember_token',
     ];
 
     public function carritos(): HasMany
@@ -33,6 +35,6 @@ class Usuario extends Model
 
     public function setPasswordAttribute($value): void
     {
-        $this->attributes['password_hash'] = Hash::make($value);
+        $this->attributes['password'] = Hash::make($value);
     }
 }

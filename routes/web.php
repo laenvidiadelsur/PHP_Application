@@ -10,9 +10,20 @@ use App\Http\Controllers\Admin\ProductoController;
 use App\Http\Controllers\Admin\ProveedorController;
 use App\Http\Controllers\Admin\UsuarioController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Frontend\FoundationController;
+use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\ProductController;
+use App\Http\Controllers\Frontend\SupplierController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', DashboardController::class)->name('dashboard.demo');
+// Frontend Routes
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/productos', [ProductController::class, 'index'])->name('products.index');
+Route::get('/productos/{producto}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/fundaciones', [FoundationController::class, 'index'])->name('foundations.index');
+Route::get('/fundaciones/{fundacion}', [FoundationController::class, 'show'])->name('foundations.show');
+Route::get('/proveedores', [SupplierController::class, 'index'])->name('suppliers.index');
+Route::get('/proveedores/{proveedor}', [SupplierController::class, 'show'])->name('suppliers.show');
 
 // Authentication Routes
 Route::middleware('guest')->group(function (): void {

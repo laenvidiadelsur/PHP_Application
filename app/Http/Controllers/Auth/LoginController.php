@@ -24,7 +24,15 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('admin.dashboard'));
+            $user = Auth::user();
+            
+            // Si el usuario es administrador, redirigir al panel de administración
+            if ($user && $user->can('access-admin')) {
+                return redirect()->intended(route('admin.dashboard'));
+            }
+            
+            // Si no es administrador, redirigir al home
+            return redirect()->intended(route('home'));
         }
 
         throw ValidationException::withMessages([
