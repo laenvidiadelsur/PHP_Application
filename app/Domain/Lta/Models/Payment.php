@@ -14,16 +14,13 @@ class Payment extends Model
     protected $fillable = [
         'order_id',
         'payment_method',
-        'status',
+        'estado',
         'transaction_ref',
     ];
 
-    protected $casts = [
-        'created_at' => 'datetime',
-    ];
 
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Orden::class, 'order_id');
     }
 }

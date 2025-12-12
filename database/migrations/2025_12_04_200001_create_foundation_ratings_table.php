@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('test.foundation_ratings', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('test.users')->onDelete('cascade');
+            $table->foreignId('foundation_id')->constrained('test.foundations')->onDelete('cascade');
+            $table->tinyInteger('rating')->unsigned(); // 1-5
+            $table->text('comment')->nullable();
+            $table->timestamps();
+            
+            // Unique constraint - one rating per user per foundation
+            $table->unique(['user_id', 'foundation_id']);
+            
+            $table->index('user_id');
+            $table->index('foundation_id');
+            $table->index('rating');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('test.foundation_ratings');
+    }
+};

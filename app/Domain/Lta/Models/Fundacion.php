@@ -17,15 +17,32 @@ class Fundacion extends Model
         'description',
         'address',
         'verified',
+        'activa',
     ];
 
     protected $casts = [
         'verified' => 'boolean',
         'created_at' => 'datetime',
+        'activa' => 'boolean',
     ];
+
+    public function proveedores(): HasMany
+    {
+        return $this->hasMany(Proveedor::class, 'fundacion_id');
+    }
 
     public function carts(): HasMany
     {
         return $this->hasMany(Carrito::class, 'foundation_id');
+    }
+
+    public function votes(): HasMany
+    {
+        return $this->hasMany(FoundationVote::class, 'foundation_id');
+    }
+
+    public function isVotedByUser($userId): bool
+    {
+        return $this->votes()->where('user_id', $userId)->exists();
     }
 }

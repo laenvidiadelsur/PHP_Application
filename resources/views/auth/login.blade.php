@@ -1,94 +1,100 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Login | {{ config('app.name') }}</title>
-
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
-  <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-</head>
-<body class="hold-transition login-page">
-<div class="login-box">
-  <div class="login-logo">
-    <a href="{{ route('admin.dashboard') }}"><b>{{ config('admin.brand', 'Admin LTA') }}</b></a>
-  </div>
-  <!-- /.login-logo -->
-  <div class="card">
-    <div class="card-body login-card-body">
-      <p class="login-box-msg">Inicia sesión para acceder al panel</p>
-
-      @if ($errors->any())
-        <div class="alert alert-danger">
-          <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-              <li>{{ $error }}</li>
-            @endforeach
-          </ul>
-        </div>
-      @endif
-
-      <form action="{{ route('login') }}" method="post">
-        @csrf
-        <div class="input-group mb-3">
-          <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email" value="{{ old('email') }}" required autofocus>
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope"></span>
+<x-frontend.layouts.app pageTitle="Iniciar Sesión">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <!-- Logo y Título -->
+            <div class="text-center">
+                <div class="flex justify-center mb-6">
+                    <div class="w-16 h-16 bg-gradient-to-r from-orange-600 to-amber-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-2xl">AC</span>
+                    </div>
+                </div>
+                <h2 class="text-4xl font-bold mb-2">
+                    <span class="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                        Iniciar Sesión
+                    </span>
+                </h2>
+                <p class="text-gray-600">Accede a tu cuenta</p>
             </div>
-          </div>
-          @error('email')
-            <span class="invalid-feedback" role="alert">
-              <strong>{{ $message }}</strong>
-            </span>
-          @enderror
-        </div>
-        <div class="input-group mb-3">
-          <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Contraseña" required>
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
+
+            <!-- Mensajes -->
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <!-- Formulario -->
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                    @csrf
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            Email
+                        </label>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               value="{{ old('email') }}" 
+                               required 
+                               autofocus
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent @error('email') border-red-500 @enderror"
+                               placeholder="tu@email.com">
+                        @error('email')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                            Contraseña
+                        </label>
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               required
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent @error('password') border-red-500 @enderror"
+                               placeholder="••••••••">
+                        @error('password')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input id="remember" 
+                                   name="remember" 
+                                   type="checkbox" 
+                                   class="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded">
+                            <label for="remember" class="ml-2 block text-sm text-gray-700">
+                                Recordarme
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="submit" 
+                                class="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl">
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        ¿No tienes cuenta? 
+                        <a href="{{ route('register') }}" class="font-medium text-orange-600 hover:text-orange-700">
+                            Regístrate aquí
+                        </a>
+                    </p>
+                </div>
             </div>
-          </div>
-          @error('password')
-            <span class="invalid-feedback" role="alert">
-              <strong>{{ $message }}</strong>
-            </span>
-          @enderror
         </div>
-        <div class="row">
-          <div class="col-8">
-            <div class="icheck-primary">
-              <input type="checkbox" id="remember" name="remember" value="1">
-              <label for="remember">
-                Recordarme
-              </label>
-            </div>
-          </div>
-          <!-- /.col -->
-          <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
-          </div>
-          <!-- /.col -->
-        </div>
-      </form>
     </div>
-    <!-- /.login-card-body -->
-  </div>
-</div>
-<!-- /.login-box -->
-
-<!-- jQuery -->
-<script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
-<!-- Bootstrap 4 -->
-<script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-<!-- AdminLTE App -->
-<script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
-</body>
-</html>
-
+</x-frontend.layouts.app>

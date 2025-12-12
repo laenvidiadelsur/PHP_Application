@@ -2,119 +2,71 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Domain\Lta\Models\Fundacion;
 use App\Domain\Lta\Models\Proveedor;
-use Illuminate\Http\RedirectResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\View\View;
 
-class ProveedorController extends AdminController
+class ProveedorController extends Controller
 {
-    public function index(): View
+    public function index()
     {
-        $this->pageTitle = 'Proveedores';
-
-        $proveedores = Proveedor::with('fundacion')
-            ->orderBy('nombre')
-            ->paginate(12);
-
-        return view('admin.proveedores.index', $this->shareMeta([
-            'proveedores' => $proveedores,
-        ]));
+        $proveedores = Proveedor::orderBy('name')->paginate(15);
+        $pageTitle = 'Proveedores';
+        return view('admin.proveedores.index', compact('proveedores', 'pageTitle'));
     }
 
-    public function create(): View
+    public function create()
     {
-        $this->pageTitle = 'Nuevo proveedor';
-
-        return view('admin.proveedores.create', $this->shareMeta([
-            'proveedor' => new Proveedor(),
-            'fundaciones' => Fundacion::orderBy('nombre')->get(),
-            'estados' => ['pendiente', 'aprobado', 'rechazado'],
-        ]));
+        $pageTitle = 'Nuevo Proveedor';
+        $proveedor = new Proveedor();
+        return view('admin.proveedores.create', compact('pageTitle', 'proveedor'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        $data = $this->validatedData($request);
-
-        Proveedor::create($data);
-
-        return redirect()
-            ->route('admin.proveedores.index')
-            ->with('success', 'Proveedor creado correctamente.');
-    }
-
-    public function edit(Proveedor $proveedor): View
-    {
-        $this->pageTitle = 'Editar proveedor';
-
-        return view('admin.proveedores.edit', $this->shareMeta([
-            'proveedor' => $proveedor,
-            'fundaciones' => Fundacion::orderBy('nombre')->get(),
-            'estados' => ['pendiente', 'aprobado', 'rechazado'],
-        ]));
-    }
-
-    public function update(Request $request, Proveedor $proveedor): RedirectResponse
-    {
-        $data = $this->validatedData($request, $proveedor->id);
-
-        $proveedor->update($data);
-
-        return redirect()
-            ->route('admin.proveedores.index')
-            ->with('success', 'Proveedor actualizado correctamente.');
-    }
-
-    public function destroy(Proveedor $proveedor): RedirectResponse
-    {
-        if ($proveedor->productos()->exists()) {
-            return redirect()
-                ->route('admin.proveedores.index')
-                ->with('error', 'No se puede eliminar un proveedor con productos asociados.');
-        }
-
-        $proveedor->delete();
-
-        return redirect()
-            ->route('admin.proveedores.index')
-            ->with('success', 'Proveedor eliminado correctamente.');
-    }
-
-    private function validatedData(Request $request, ?int $proveedorId = null): array
-    {
-        $data = $request->validate([
-            'nombre' => ['required', 'string', 'max:120'],
-            'nit' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('proveedor', 'nit')->ignore($proveedorId),
-            ],
-            'direccion' => ['required', 'string', 'max:200'],
-            'telefono' => ['required', 'string', 'max:30'],
-            'email' => [
-                'required',
-                'email',
-                'max:120',
-                Rule::unique('proveedor', 'email')->ignore($proveedorId),
-            ],
-            'representante_nombre' => ['required', 'string', 'max:120'],
-            'representante_ci' => ['required', 'string', 'max:40'],
-            'tipo_servicio' => ['required', 'string', 'max:120'],
-            'fundacion_id' => ['required', 'exists:fundacion,id'],
-            'estado' => ['required', Rule::in(['pendiente', 'aprobado', 'rechazado'])],
-            'activo' => ['nullable', 'boolean'],
-        ], [], [
-            'nit' => 'NIT',
+        $validated = $request->validate([
+            'name' => 'required|string|max:150',
+            'contact_name' => 'nullable|string|max:100',
+            'email' => 'nullable|string|email|max:150',
+            'phone' => 'nullable|string|max:30',
+            'address' => 'nullable|string|max:255',
+            'tax_id' => 'nullable|string|max:50|unique:test.suppliers,tax_id',
         ]);
 
-        $data['activo'] = $request->boolean('activo');
+        Proveedor::create($validated);
 
-        return $data;
+        return redirect()->route('admin.proveedores.index')
+            ->with('success', 'Proveedor creado exitosamente.');
+    }
+
+    public function edit(Proveedor $proveedor)
+    {
+        $pageTitle = 'Editar Proveedor';
+        return view('admin.proveedores.edit', compact('proveedor', 'pageTitle'));
+    }
+
+    public function update(Request $request, Proveedor $proveedor)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:150',
+            'contact_name' => 'nullable|string|max:100',
+            'email' => 'nullable|string|email|max:150',
+            'phone' => 'nullable|string|max:30',
+            'address' => 'nullable|string|max:255',
+            'tax_id' => 'nullable|string|max:50|unique:test.suppliers,tax_id,' . $proveedor->id,
+        ]);
+
+        $proveedor->update($validated);
+
+        return redirect()->route('admin.proveedores.index')
+            ->with('success', 'Proveedor actualizado exitosamente.');
+    }
+
+    public function destroy(Proveedor $proveedor)
+    {
+        $proveedor->delete();
+
+        return redirect()->route('admin.proveedores.index')
+            ->with('success', 'Proveedor eliminado exitosamente.');
     }
 }
-
-

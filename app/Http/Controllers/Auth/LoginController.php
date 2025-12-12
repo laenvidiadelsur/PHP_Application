@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Domain\Lta\Models\Usuario;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,12 +27,41 @@ class LoginController extends Controller
 
             $user = Auth::user();
             
-            // Si el usuario es administrador, redirigir al panel de administración
-            if ($user && $user->can('access-admin')) {
+            // Los administradores siempre pueden iniciar sesión
+            if ($user->isAdmin()) {
                 return redirect()->intended(route('admin.dashboard'));
             }
             
-            // Si no es administrador, redirigir al home
+            // Verificar si el usuario está activo (excepto administradores)
+            // Si activo es null, se considera activo por defecto
+            if ($user->activo === false) {
+                Auth::logout();
+                return back()->with('error', 'Tu cuenta ha sido desactivada. Contacta al administrador.');
+            }
+            
+            // Verificar estado de aprobación para fundaciones y proveedores
+            if (in_array($user->rol, [Usuario::ROL_FUNDACION, Usuario::ROL_PROVEEDOR])) {
+                if ($user->approval_status === Usuario::STATUS_PENDING) {
+                    Auth::logout();
+                    return back()->with('error', 'Tu cuenta está pendiente de aprobación. Un administrador revisará tu solicitud.');
+                }
+                
+                if ($user->approval_status === Usuario::STATUS_REJECTED) {
+                    Auth::logout();
+                    return back()->with('error', 'Tu solicitud fue rechazada. Contacta al administrador para más información.');
+                }
+            }
+            
+            // Redirigir según el rol
+            if ($user->isFundacion()) {
+                return redirect()->intended(route('fundacion.dashboard'));
+            }
+            
+            if ($user->isProveedor()) {
+                return redirect()->intended(route('proveedor.dashboard'));
+            }
+            
+            // Comprador o usuario normal
             return redirect()->intended(route('home'));
         }
 
@@ -47,7 +77,7 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect()->route('home')->with('success', 'Sesión cerrada exitosamente');
     }
 }
 

@@ -24,14 +24,14 @@
 </div>
 
 <div class="form-group">
-    <label for="status">Estado <span class="text-danger">*</span></label>
-    <select class="form-control @error('status') is-invalid @enderror" 
-            id="status" name="status" required>
-        <option value="pending" {{ old('status', $payment->status ?? '') === 'pending' ? 'selected' : '' }}>Pendiente</option>
-        <option value="completed" {{ old('status', $payment->status ?? '') === 'completed' ? 'selected' : '' }}>Completado</option>
-        <option value="failed" {{ old('status', $payment->status ?? '') === 'failed' ? 'selected' : '' }}>Fallido</option>
+    <label for="estado">Estado <span class="text-danger">*</span></label>
+    <select class="form-control @error('estado') is-invalid @enderror" 
+            id="estado" name="estado" required>
+        <option value="pendiente" {{ old('estado', $payment->estado ?? '') === 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+        <option value="completado" {{ old('estado', $payment->estado ?? '') === 'completado' ? 'selected' : '' }}>Completado</option>
+        <option value="fallido" {{ old('estado', $payment->estado ?? '') === 'fallido' ? 'selected' : '' }}>Fallido</option>
     </select>
-    @error('status')
+    @error('estado')
         <div class="invalid-feedback">{{ $message }}</div>
     @enderror
 </div>

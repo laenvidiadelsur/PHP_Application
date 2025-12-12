@@ -27,18 +27,24 @@
                 <a href="{{ route('suppliers.index') }}" class="text-gray-700 hover:text-orange-600 transition-colors font-medium">
                     Proveedores
                 </a>
+                <a href="{{ route('events.index') }}" class="text-gray-700 hover:text-orange-600 transition-colors font-medium">
+                    Eventos
+                </a>
             </nav>
             
             <!-- Actions -->
             <div class="flex items-center space-x-4">
                 @auth
-                    @if(Route::has('cart.index'))
-                        <a href="{{ route('cart.index') }}" class="relative p-2 text-gray-700 hover:text-orange-600 transition-colors">
+                    @php
+                        $cartCount = count(session('cart', []));
+                    @endphp
+                    @if($cartCount > 0)
+                        <a href="{{ route('checkout.index') }}" class="relative p-2 text-gray-700 hover:text-orange-600 transition-colors">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                             <span class="absolute top-0 right-0 bg-orange-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                                {{ session('cart_count', 0) }}
+                                {{ $cartCount }}
                             </span>
                         </a>
                     @endif
@@ -49,12 +55,26 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            @if(Route::has('orders.index'))
-                                <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    Mis Pedidos
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            @if(auth()->user()->isAdmin())
+                                <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Panel Administrador
+                                </a>
+                            @elseif(auth()->user()->isFundacion())
+                                <a href="{{ route('fundacion.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Panel Fundación
+                                </a>
+                            @elseif(auth()->user()->isProveedor())
+                                <a href="{{ route('proveedor.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Panel Proveedor
                                 </a>
                             @endif
+                            <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Mis Órdenes
+                            </a>
+                            <a href="{{ route('profile.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Mi Perfil
+                            </a>
                             <form method="POST" action="{{ route('logout') }}" class="block">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">

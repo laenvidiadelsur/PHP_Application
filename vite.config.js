@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/admin.css',
                 'resources/js/modules/admin/index.js',
+                'resources/js/modules/admin/dashboard.js',
             ],
             refresh: true,
         }),

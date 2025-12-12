@@ -44,12 +44,12 @@
                                 <td>{{ $payment->order_id }}</td>
                                 <td>{{ $payment->payment_method }}</td>
                                 <td>
-                                    <span class="badge badge-{{ $payment->status === 'pending' ? 'warning' : 'success' }}">
-                                        {{ ucfirst($payment->status) }}
+                                    <span class="badge badge-{{ $payment->estado === 'pendiente' ? 'warning' : 'success' }}">
+                                        {{ ucfirst($payment->estado) }}
                                     </span>
                                 </td>
                                 <td>{{ $payment->transaction_ref ?? 'N/A' }}</td>
-                                <td>{{ $payment->created_at?->format('d/m/Y H:i') }}</td>
+                                <td>N/A</td>
                                 <td>
                                     <a href="{{ route('admin.payments.show', $payment) }}" class="btn btn-sm btn-secondary">
                                         <i class="fas fa-eye"></i> Ver

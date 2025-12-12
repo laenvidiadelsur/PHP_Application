@@ -1,5 +1,19 @@
-<x-layouts.admin :pageTitle="$pageTitle">
-    @if (session('success'))
+@extends('admin.layouts.app')
+
+@section('content')
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Fundaciones</h2>
+                <a href="{{ route('admin.fundaciones.create') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Nueva Fundación
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -8,86 +22,58 @@
         </div>
     @endif
 
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    <div class="card card-primary card-outline">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title mb-0">Listado de fundaciones</h3>
-            <a href="{{ route('admin.fundaciones.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus mr-1"></i> Nueva fundación
-            </a>
-        </div>
-        <div class="card-body p-0">
+    <div class="card">
+        <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped table-hover mb-0">
-                    <thead class="thead-light">
+                <table class="table table-striped">
+                    <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Nombre</th>
-                            <th>NIT</th>
-                            <th>Email</th>
-                            <th>Teléfono</th>
-                            <th>Área de acción</th>
-                            <th class="text-center">Activa</th>
-                            <th class="text-right pr-4">Acciones</th>
+                            <th>Dirección</th>
+                            <th>Verificada</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($fundaciones as $fundacion)
+                        @forelse($fundaciones as $fundacion)
                             <tr>
+                                <td>{{ $fundacion->id }}</td>
+                                <td>{{ $fundacion->name }}</td>
+                                <td>{{ $fundacion->address ?? 'N/A' }}</td>
                                 <td>
-                                    <strong>{{ $fundacion->nombre }}</strong>
-                                    <p class="mb-0 text-muted small">{{ $fundacion->direccion }}</p>
-                                </td>
-                                <td>{{ $fundacion->nit }}</td>
-                                <td>{{ $fundacion->email }}</td>
-                                <td>{{ $fundacion->telefono }}</td>
-                                <td>{{ $fundacion->area_accion }}</td>
-                                <td class="text-center">
-                                    @if ($fundacion->activa)
+                                    @if($fundacion->verified)
                                         <span class="badge badge-success">Sí</span>
                                     @else
                                         <span class="badge badge-secondary">No</span>
                                     @endif
                                 </td>
-                                <td class="text-right pr-4">
-                                    <a href="{{ route('admin.fundaciones.edit', $fundacion) }}" class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                        Editar
+                                <td>
+                                    <a href="{{ route('admin.fundaciones.edit', $fundacion) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-edit"></i> Editar
                                     </a>
                                     <form action="{{ route('admin.fundaciones.destroy', $fundacion) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Deseas eliminar esta fundación? Esta acción no se puede deshacer.');">
-                                            <i class="fas fa-trash"></i>
-                                            Eliminar
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar esta fundación?')">
+                                            <i class="fas fa-trash"></i> Eliminar
                                         </button>
                                     </form>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">
-                                    No hay fundaciones registradas.
-                                </td>
+                                <td colspan="5" class="text-center">No hay fundaciones registradas</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-        </div>
-        @if ($fundaciones->hasPages())
-            <div class="card-footer">
+
+            <div class="mt-3">
                 {{ $fundaciones->links() }}
             </div>
-        @endif
+        </div>
     </div>
-</x-layouts.admin>
-
-
+</div>
+@endsection

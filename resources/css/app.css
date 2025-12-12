@@ -8,6 +8,9 @@
 @theme {
     --font-sans: 'Inter', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    
+    /* Animation delays */
+    --animate-delay-300: 300ms;
 }
 
 /* Custom Styles */
@@ -23,4 +26,9 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+/* Animation delay utility */
+.delay-300 {
+    animation-delay: 300ms;
 }

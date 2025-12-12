@@ -1,5 +1,14 @@
-<x-layouts.admin :pageTitle="$pageTitle">
-    @if (session('success'))
+@extends('admin.layouts.app')
+
+@section('content')
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h2>Órdenes</h2>
+        </div>
+    </div>
+
+    @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -8,52 +17,43 @@
         </div>
     @endif
 
-    <div class="card card-primary card-outline">
-        <div class="card-header">
-            <h3 class="card-title mb-0">Listado de órdenes</h3>
-        </div>
-        <div class="card-body p-0">
+    <div class="card">
+        <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped table-hover mb-0">
-                    <thead class="thead-light">
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <th>Número</th>
+                            <th>ID</th>
                             <th>Usuario</th>
                             <th>Total</th>
-                            <th>Estado pago</th>
-                            <th>Estado envío</th>
+                            <th>Estado</th>
                             <th>Fecha</th>
-                            <th class="text-right pr-4">Acciones</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($ordenes as $orden)
+                        @forelse($ordenes as $orden)
                             <tr>
-                                <td><strong>{{ $orden->numero_orden }}</strong></td>
-                                <td>{{ optional($orden->usuario)->nombre ?? 'N/A' }}</td>
-                                <td>Bs {{ number_format((float) $orden->total, 2, ',', '.') }}</td>
+                                <td>{{ $orden->id }}</td>
+                                <td>{{ $orden->cart->user->name ?? 'N/A' }}</td>
+                                <td>${{ number_format($orden->total_amount, 2) }}</td>
                                 <td>
-                                    <span class="badge badge-{{ $orden->estado_pago === 'completado' ? 'success' : ($orden->estado_pago === 'fallido' ? 'danger' : 'warning') }}">
-                                        {{ ucfirst($orden->estado_pago) }}
+                                    <span class="badge badge-{{ $orden->estado === 'completada' ? 'success' : ($orden->estado === 'pendiente' ? 'warning' : 'secondary') }}">
+                                        {{ ucfirst($orden->estado) }}
                                     </span>
                                 </td>
+                                <td>N/A</td>
                                 <td>
-                                    <span class="badge badge-{{ $orden->estado_envio === 'entregado' ? 'success' : ($orden->estado_envio === 'cancelado' ? 'danger' : 'info') }}">
-                                        {{ ucfirst($orden->estado_envio) }}
-                                    </span>
-                                </td>
-                                <td>{{ $orden->created_at->format('d/m/Y H:i') }}</td>
-                                <td class="text-right pr-4">
-                                    <a href="{{ route('admin.ordenes.show', $orden) }}" class="btn btn-sm btn-info">
+                                    <a href="{{ route('admin.ordenes.show', $orden) }}" class="btn btn-sm btn-secondary">
                                         <i class="fas fa-eye"></i> Ver
                                     </a>
-                                    <a href="{{ route('admin.ordenes.edit', $orden) }}" class="btn btn-sm btn-warning">
+                                    <a href="{{ route('admin.ordenes.edit', $orden) }}" class="btn btn-sm btn-info">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
                                     <form action="{{ route('admin.ordenes.destroy', $orden) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Deseas eliminar esta orden?');">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar esta orden?')">
                                             <i class="fas fa-trash"></i> Eliminar
                                         </button>
                                     </form>
@@ -61,18 +61,17 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">No hay órdenes registradas.</td>
+                                <td colspan="6" class="text-center">No hay órdenes registradas</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-        </div>
-        @if ($ordenes->hasPages())
-            <div class="card-footer">
+
+            <div class="mt-3">
                 {{ $ordenes->links() }}
             </div>
-        @endif
+        </div>
     </div>
-</x-layouts.admin>
-
+</div>
+@endsection

@@ -2,125 +2,79 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Domain\Lta\Models\Fundacion;
+use App\Domain\Lta\Models\Category;
 use App\Domain\Lta\Models\Producto;
 use App\Domain\Lta\Models\Proveedor;
-use Illuminate\Http\RedirectResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\View\View;
 
-class ProductoController extends AdminController
+class ProductoController extends Controller
 {
-    private const UNIDADES = ['kg', 'unidad', 'litro', 'metro'];
-    private const CATEGORIAS = ['materiales', 'equipos', 'alimentos', 'gaseosas', 'otros'];
-    private const ESTADOS = ['activo', 'inactivo'];
-
-    public function index(): View
+    public function index()
     {
-        $this->pageTitle = 'Productos';
-
-        $productos = Producto::with(['proveedor', 'fundacion'])
-            ->orderByDesc('created_at')
-            ->paginate(12);
-
-        return view('admin.productos.index', $this->shareMeta([
-            'productos' => $productos,
-        ]));
+        $productos = Producto::with(['supplier', 'category'])->orderBy('name')->paginate(15);
+        $pageTitle = 'Productos';
+        return view('admin.productos.index', compact('productos', 'pageTitle'));
     }
 
-    public function create(): View
+    public function create()
     {
-        $this->pageTitle = 'Nuevo producto';
-
-        return view('admin.productos.create', $this->shareMeta([
-            'producto' => new Producto(),
-            'fundaciones' => Fundacion::orderBy('nombre')->get(),
-            'proveedores' => Proveedor::with('fundacion')->orderBy('nombre')->get(),
-            'unidades' => self::UNIDADES,
-            'categorias' => self::CATEGORIAS,
-            'estados' => self::ESTADOS,
-        ]));
+        $proveedores = Proveedor::orderBy('name')->get();
+        $categorias = Category::orderBy('name')->get();
+        $pageTitle = 'Nuevo Producto';
+        $producto = new Producto();
+        return view('admin.productos.create', compact('proveedores', 'categorias', 'pageTitle', 'producto'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        $data = $this->validatedData($request);
+        $validated = $request->validate([
+            'name' => 'required|string|max:150',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'estado' => 'required|string|max:30',
+            'supplier_id' => 'required|exists:test.suppliers,id',
+            'category_id' => 'nullable|exists:test.categories,id',
+        ]);
 
-        if (!$this->proveedorPerteneceAFundacion($data['proveedor_id'], $data['fundacion_id'])) {
-            return back()
-                ->withErrors(['proveedor_id' => 'El proveedor seleccionado no está asociado a la fundación elegida.'])
-                ->withInput();
-        }
+        Producto::create($validated);
 
-        Producto::create($data);
-
-        return redirect()
-            ->route('admin.productos.index')
-            ->with('success', 'Producto creado correctamente.');
+        return redirect()->route('admin.productos.index')
+            ->with('success', 'Producto creado exitosamente.');
     }
 
-    public function edit(Producto $producto): View
+    public function edit(Producto $producto)
     {
-        $this->pageTitle = 'Editar producto';
-
-        return view('admin.productos.edit', $this->shareMeta([
-            'producto' => $producto,
-            'fundaciones' => Fundacion::orderBy('nombre')->get(),
-            'proveedores' => Proveedor::with('fundacion')->orderBy('nombre')->get(),
-            'unidades' => self::UNIDADES,
-            'categorias' => self::CATEGORIAS,
-            'estados' => self::ESTADOS,
-        ]));
+        $proveedores = Proveedor::orderBy('name')->get();
+        $categorias = Category::orderBy('name')->get();
+        $pageTitle = 'Editar Producto';
+        return view('admin.productos.edit', compact('producto', 'proveedores', 'categorias', 'pageTitle'));
     }
 
-    public function update(Request $request, Producto $producto): RedirectResponse
+    public function update(Request $request, Producto $producto)
     {
-        $data = $this->validatedData($request, $producto->id);
+        $validated = $request->validate([
+            'name' => 'required|string|max:150',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'estado' => 'required|string|max:30',
+            'supplier_id' => 'required|exists:test.suppliers,id',
+            'category_id' => 'nullable|exists:test.categories,id',
+        ]);
 
-        if (!$this->proveedorPerteneceAFundacion($data['proveedor_id'], $data['fundacion_id'])) {
-            return back()
-                ->withErrors(['proveedor_id' => 'El proveedor seleccionado no está asociado a la fundación elegida.'])
-                ->withInput();
-        }
+        $producto->update($validated);
 
-        $producto->update($data);
-
-        return redirect()
-            ->route('admin.productos.index')
-            ->with('success', 'Producto actualizado correctamente.');
+        return redirect()->route('admin.productos.index')
+            ->with('success', 'Producto actualizado exitosamente.');
     }
 
-    public function destroy(Producto $producto): RedirectResponse
+    public function destroy(Producto $producto)
     {
         $producto->delete();
 
-        return redirect()
-            ->route('admin.productos.index')
-            ->with('success', 'Producto eliminado correctamente.');
-    }
-
-    private function validatedData(Request $request, ?int $productoId = null): array
-    {
-        return $request->validate([
-            'nombre' => ['required', 'string', 'max:150'],
-            'descripcion' => ['required', 'string'],
-            'precio' => ['required', 'numeric', 'min:0'],
-            'unidad' => ['required', Rule::in(self::UNIDADES)],
-            'stock' => ['required', 'integer', 'min:0'],
-            'categoria' => ['required', Rule::in(self::CATEGORIAS)],
-            'proveedor_id' => ['required', 'exists:proveedor,id'],
-            'fundacion_id' => ['required', 'exists:fundacion,id'],
-            'estado' => ['required', Rule::in(self::ESTADOS)],
-        ]);
-    }
-
-    private function proveedorPerteneceAFundacion(int $proveedorId, int $fundacionId): bool
-    {
-        return Proveedor::whereKey($proveedorId)
-            ->where('fundacion_id', $fundacionId)
-            ->exists();
+        return redirect()->route('admin.productos.index')
+            ->with('success', 'Producto eliminado exitosamente.');
     }
 }
-
-

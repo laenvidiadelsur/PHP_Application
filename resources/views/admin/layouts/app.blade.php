@@ -113,28 +113,39 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <div class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1 class="m-0">{{ $pageTitle ?? 'Panel Admin' }}</h1>
-          </div><!-- /.col -->
-          <div class="col-sm-6">
-            @isset($breadcrumbs)
-              <ol class="breadcrumb float-sm-right">
-                {{ $breadcrumbs }}
-              </ol>
-            @endisset
-          </div><!-- /.col -->
-        </div><!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </div>
-    <!-- /.content-header -->
+    @hasSection('content-header')
+      @yield('content-header')
+    @else
+      @if(isset($slot) && !empty($slot))
+        <!-- Content header handled in slot -->
+      @else
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">{{ $pageTitle ?? 'Panel Admin' }}</h1>
+              </div>
+              <div class="col-sm-6">
+                @isset($breadcrumbs)
+                  <ol class="breadcrumb float-sm-right">
+                    {{ $breadcrumbs }}
+                  </ol>
+                @endisset
+              </div>
+            </div>
+          </div>
+        </div>
+      @endif
+    @endif
 
     <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
-        {{ $slot }}
+        @hasSection('content')
+          @yield('content')
+        @else
+          {{ $slot ?? '' }}
+        @endif
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content -->

@@ -73,10 +73,34 @@
                                     </span>
                                 @endif
                             </div>
-                            <a href="{{ route('products.show', $producto) }}" 
-                               class="block w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 text-center">
-                                Ver Detalles
-                            </a>
+                            <div class="flex gap-2">
+                                <a href="{{ route('products.show', $producto) }}" 
+                                   class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium transition-all duration-300 text-center text-sm">
+                                    Ver
+                                </a>
+                                @auth
+                                    @if($producto->estado === 'activo' && $producto->stock > 0)
+                                        <form action="{{ route('cart.add', $producto) }}" method="POST" class="flex-1">
+                                            @csrf
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" 
+                                                    class="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm">
+                                                + Carrito
+                                            </button>
+                                        </form>
+                                    @else
+                                        <button disabled 
+                                                class="w-full bg-gray-300 text-gray-500 px-4 py-2 rounded-lg font-medium text-sm cursor-not-allowed">
+                                            No disponible
+                                        </button>
+                                    @endif
+                                @else
+                                    <a href="{{ route('login') }}" 
+                                       class="flex-1 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 text-center text-sm">
+                                        + Carrito
+                                    </a>
+                                @endauth
+                            </div>
                         </div>
                     </x-frontend.card>
                 @endforeach

@@ -11,14 +11,17 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        $payments = Payment::with('order')->orderBy('created_at', 'desc')->paginate(15);
-        return view('admin.payments.index', compact('payments'));
+        $payments = Payment::with('order')->orderBy('id', 'desc')->paginate(15);
+        $pageTitle = 'Pagos';
+        return view('admin.payments.index', compact('payments', 'pageTitle'));
     }
 
     public function create()
     {
-        $orders = Orden::where('status', 'pending')->get();
-        return view('admin.payments.create', compact('orders'));
+        $orders = Orden::where('estado', 'pendiente')->get();
+        $pageTitle = 'Nuevo Pago';
+        $payment = new Payment();
+        return view('admin.payments.create', compact('orders', 'pageTitle', 'payment'));
     }
 
     public function store(Request $request)
@@ -26,7 +29,7 @@ class PaymentController extends Controller
         $validated = $request->validate([
             'order_id' => 'required|exists:test.orders,id',
             'payment_method' => 'required|string|max:50',
-            'status' => 'required|string|max:30',
+            'estado' => 'required|string|max:30',
             'transaction_ref' => 'nullable|string|max:120',
         ]);
 
@@ -39,13 +42,15 @@ class PaymentController extends Controller
     public function show(Payment $payment)
     {
         $payment->load('order');
-        return view('admin.payments.show', compact('payment'));
+        $pageTitle = 'Detalle de Pago';
+        return view('admin.payments.show', compact('payment', 'pageTitle'));
     }
 
     public function edit(Payment $payment)
     {
         $orders = Orden::all();
-        return view('admin.payments.edit', compact('payment', 'orders'));
+        $pageTitle = 'Editar Pago';
+        return view('admin.payments.edit', compact('payment', 'orders', 'pageTitle'));
     }
 
     public function update(Request $request, Payment $payment)
@@ -53,7 +58,7 @@ class PaymentController extends Controller
         $validated = $request->validate([
             'order_id' => 'required|exists:test.orders,id',
             'payment_method' => 'required|string|max:50',
-            'status' => 'required|string|max:30',
+            'estado' => 'required|string|max:30',
             'transaction_ref' => 'nullable|string|max:120',
         ]);
 

@@ -3,80 +3,42 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Domain\Lta\Models\Carrito;
-use App\Domain\Lta\Models\Usuario;
-use Illuminate\Http\RedirectResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\View\View;
 
-class CarritoController extends AdminController
+class CarritoController extends Controller
 {
-    private const ESTADOS = ['activo', 'procesando', 'completado', 'abandonado'];
-
-    public function index(): View
+    public function index()
     {
-        $this->pageTitle = 'Carritos';
-
-        $carritos = Carrito::with(['usuario', 'items.producto'])
-            ->orderByDesc('created_at')
-            ->paginate(15);
-
-        return view('admin.carritos.index', $this->shareMeta([
-            'carritos' => $carritos,
-        ]));
+        $carritos = Carrito::with(['user', 'supplier', 'foundation'])->orderBy('created_at', 'desc')->paginate(15);
+        $pageTitle = 'Carritos';
+        return view('admin.carritos.index', compact('carritos', 'pageTitle'));
     }
 
-    public function show(Carrito $carrito): View
+    public function show(Carrito $carrito)
     {
-        $this->pageTitle = 'Detalle del carrito';
-
-        $carrito->load(['usuario', 'items.producto']);
-
-        return view('admin.carritos.show', $this->shareMeta([
-            'carrito' => $carrito,
-        ]));
+        $carrito->load(['items.product', 'user', 'supplier', 'foundation']);
+        $pageTitle = 'Detalle de Carrito';
+        return view('admin.carritos.show', compact('carrito', 'pageTitle'));
     }
 
-    public function edit(Carrito $carrito): View
+    public function edit(Carrito $carrito)
     {
-        $this->pageTitle = 'Editar carrito';
-
-        return view('admin.carritos.edit', $this->shareMeta([
-            'carrito' => $carrito->load('usuario'),
-            'usuarios' => Usuario::orderBy('nombre')->get(),
-            'estados' => self::ESTADOS,
-        ]));
+        // Implementación futura si se requiere editar carritos
+        return redirect()->route('admin.carritos.show', $carrito);
     }
 
-    public function update(Request $request, Carrito $carrito): RedirectResponse
+    public function update(Request $request, Carrito $carrito)
     {
-        $data = $this->validatedData($request);
-
-        $carrito->update($data);
-
-        return redirect()
-            ->route('admin.carritos.index')
-            ->with('success', 'Carrito actualizado correctamente.');
+        // Implementación futura
+        return redirect()->route('admin.carritos.show', $carrito);
     }
 
-    public function destroy(Carrito $carrito): RedirectResponse
+    public function destroy(Carrito $carrito)
     {
         $carrito->delete();
 
-        return redirect()
-            ->route('admin.carritos.index')
-            ->with('success', 'Carrito eliminado correctamente.');
-    }
-
-    private function validatedData(Request $request): array
-    {
-        return $request->validate([
-            'usuario_id' => ['nullable', 'exists:usuario,id'],
-            'total' => ['required', 'numeric', 'min:0'],
-            'estado' => ['required', Rule::in(self::ESTADOS)],
-            'fecha_expiracion' => ['nullable', 'date'],
-            'session_id' => ['nullable', 'string', 'max:100'],
-        ]);
+        return redirect()->route('admin.carritos.index')
+            ->with('success', 'Carrito eliminado exitosamente.');
     }
 }
-

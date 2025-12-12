@@ -17,12 +17,14 @@ class Producto extends Model
         'name',
         'description',
         'price',
-        'status',
+        'estado',
+        'stock',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'created_at' => 'datetime',
+        'estado' => 'string',
     ];
 
     public function supplier(): BelongsTo
@@ -33,5 +35,10 @@ class Producto extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function cartItems()
+    {
+        return $this->hasMany(CarritoItem::class, 'product_id');
     }
 }

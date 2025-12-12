@@ -29,7 +29,15 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call([
-            \Database\Seeders\Lta\LicenciaSeeder::class,
+            // \Database\Seeders\Lta\LicenciaSeeder::class, // Comentado - modelo no existe
+            \Database\Seeders\AdminUserSeeder::class,
+            \Database\Seeders\CategorySeeder::class,
+            \Database\Seeders\FoundationSeeder::class,
+            \Database\Seeders\SupplierSeeder::class,
+            \Database\Seeders\ProductSeeder::class,
+            \Database\Seeders\EventSeeder::class,
+            \Database\Seeders\UserSeeder::class,
+            \Database\Seeders\CartAndOrderSeeder::class,
         ]);
     }
 }

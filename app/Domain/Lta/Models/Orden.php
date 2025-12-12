@@ -15,7 +15,7 @@ class Orden extends Model
     protected $fillable = [
         'cart_id',
         'total_amount',
-        'status',
+        'estado',
     ];
 
     protected $casts = [
@@ -31,5 +31,32 @@ class Orden extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class, 'order_id');
+    }
+
+    public function user()
+    {
+        return $this->hasOneThrough(
+            Usuario::class,
+            Carrito::class,
+            'id', // Foreign key on carts table
+            'id', // Foreign key on users table
+            'cart_id', // Local key on orders table
+            'user_id' // Local key on carts table
+        );
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(CarritoItem::class, 'cart_id', 'cart_id');
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->total_amount;
+    }
+
+    public function getNumeroOrdenAttribute()
+    {
+        return str_pad($this->id, 8, '0', STR_PAD_LEFT);
     }
 }

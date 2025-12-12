@@ -1,5 +1,19 @@
-<x-layouts.admin :pageTitle="$pageTitle">
-    @if (session('success'))
+@extends('admin.layouts.app')
+
+@section('content')
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Proveedores</h2>
+                <a href="{{ route('admin.proveedores.create') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Nuevo Proveedor
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -8,94 +22,54 @@
         </div>
     @endif
 
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    <div class="card card-primary card-outline">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title mb-0">Listado de proveedores</h3>
-            <a href="{{ route('admin.proveedores.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus mr-1"></i> Nuevo proveedor
-            </a>
-        </div>
-        <div class="card-body p-0">
+    <div class="card">
+        <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="thead-light">
+                <table class="table table-striped">
+                    <thead>
                         <tr>
-                            <th>Proveedor</th>
-                            <th>NIT</th>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Contacto</th>
                             <th>Email</th>
                             <th>Teléfono</th>
-                            <th>Tipo servicio</th>
-                            <th>Fundación</th>
-                            <th class="text-center">Estado</th>
-                            <th class="text-center">Activo</th>
-                            <th class="text-right pr-4">Acciones</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($proveedores as $proveedor)
+                        @forelse($proveedores as $proveedor)
                             <tr>
+                                <td>{{ $proveedor->id }}</td>
+                                <td>{{ $proveedor->name }}</td>
+                                <td>{{ $proveedor->contact_name ?? 'N/A' }}</td>
+                                <td>{{ $proveedor->email ?? 'N/A' }}</td>
+                                <td>{{ $proveedor->phone ?? 'N/A' }}</td>
                                 <td>
-                                    <strong>{{ $proveedor->nombre }}</strong>
-                                    <p class="mb-0 text-muted small">{{ $proveedor->direccion }}</p>
-                                </td>
-                                <td>{{ $proveedor->nit }}</td>
-                                <td>{{ $proveedor->email }}</td>
-                                <td>{{ $proveedor->telefono }}</td>
-                                <td>{{ $proveedor->tipo_servicio }}</td>
-                                <td>{{ optional($proveedor->fundacion)->nombre ?? '—' }}</td>
-                                <td class="text-center">
-                                    <span class="badge badge-{{ $proveedor->estado === 'aprobado' ? 'success' : ($proveedor->estado === 'rechazado' ? 'danger' : 'warning') }}">
-                                        {{ \Illuminate\Support\Str::ucfirst($proveedor->estado) }}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    @if ($proveedor->activo)
-                                        <span class="badge badge-success">Sí</span>
-                                    @else
-                                        <span class="badge badge-secondary">No</span>
-                                    @endif
-                                </td>
-                                <td class="text-right pr-4">
-                                    <a href="{{ route('admin.proveedores.edit', $proveedor) }}" class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                        Editar
+                                    <a href="{{ route('admin.proveedores.edit', $proveedor) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-edit"></i> Editar
                                     </a>
                                     <form action="{{ route('admin.proveedores.destroy', $proveedor) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Deseas eliminar este proveedor?');">
-                                            <i class="fas fa-trash"></i>
-                                            Eliminar
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar este proveedor?')">
+                                            <i class="fas fa-trash"></i> Eliminar
                                         </button>
                                     </form>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center py-4">
-                                    No hay proveedores registrados.
-                                </td>
+                                <td colspan="6" class="text-center">No hay proveedores registrados</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-        </div>
-        @if ($proveedores->hasPages())
-            <div class="card-footer">
+
+            <div class="mt-3">
                 {{ $proveedores->links() }}
             </div>
-        @endif
+        </div>
     </div>
-</x-layouts.admin>
-
-
+</div>
+@endsection

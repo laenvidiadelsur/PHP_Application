@@ -11,17 +11,47 @@
                 Conoce las fundaciones que están haciendo la diferencia
             </p>
         </div>
+            
+        <!-- Filters -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <form action="{{ route('foundations.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div class="md:col-span-3">
+                    <label for="sort" class="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
+                    <select name="sort" id="sort" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        <option value="name" {{ $currentSort == 'name' ? 'selected' : '' }}>Nombre (A-Z)</option>
+                        <option value="ranking" {{ $currentSort == 'ranking' ? 'selected' : '' }}>🏆 Más Votadas</option>
+                        <option value="newest" {{ $currentSort == 'newest' ? 'selected' : '' }}>🆕 Recientes</option>
+                        @auth
+                            <option value="favorites" {{ $currentSort == 'favorites' ? 'selected' : '' }}>❤️ Mis Favoritas</option>
+                        @endauth
+                    </select>
+                </div>
+                <div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300">
+                        Aplicar Filtros
+                    </button>
+                </div>
+            </form>
+        </div>
         
         <!-- Foundations Grid -->
         @if($fundaciones->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 @foreach($fundaciones as $fundacion)
                     <x-frontend.card>
-                        <div>
+                        <div class="relative">
+                            <!-- Vote Button (Top Right) -->
+                            @auth
+                                <div class="absolute top-0 right-0 z-10">
+                                    <x-frontend.vote-button :fundacion="$fundacion" :voted="$fundacion->isVotedByUser(auth()->id())" :count="$fundacion->votes_count" />
+                                </div>
+                            @endauth
+
                             <div class="w-full h-48 bg-gradient-to-br from-orange-100 to-amber-100 rounded-lg mb-4 flex items-center justify-center">
                                 <span class="text-5xl">🏢</span>
                             </div>
-                            <h3 class="text-xl font-bold mb-2">{{ $fundacion->name }}</h3>
+                            <h3 class="text-xl font-bold mb-2 pr-8">{{ $fundacion->name }}</h3>
                             @if($fundacion->mission)
                                 <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ Str::limit($fundacion->mission, 120) }}</p>
                             @endif

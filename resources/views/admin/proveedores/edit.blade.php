@@ -1,4 +1,6 @@
-<x-layouts.admin :pageTitle="$pageTitle">
+@extends('admin.layouts.app')
+
+@section('content')
     @if ($errors->any())
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Corrige los errores antes de continuar.</strong>
@@ -8,13 +10,20 @@
         </div>
     @endif
 
-    @include('admin.proveedores._form', [
-        'proveedor' => $proveedor,
-        'fundaciones' => $fundaciones,
-        'estados' => $estados,
-        'action' => route('admin.proveedores.update', $proveedor),
-        'method' => 'PUT',
-    ])
-</x-layouts.admin>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">{{ $pageTitle }}</h3>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('admin.proveedores.update', $proveedor) }}" method="POST">
+                @csrf
+                @method('PUT')
+                @include('admin.proveedores._form', [
+                    'proveedor' => $proveedor,
+                ])
+            </form>
+        </div>
+    </div>
+@endsection
 
 

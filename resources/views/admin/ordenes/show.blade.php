@@ -1,95 +1,109 @@
-<x-layouts.admin :pageTitle="$pageTitle">
+@extends('admin.layouts.app')
+
+@section('content')
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Detalle de Orden #{{ $orden->id }}</h2>
+                <a href="{{ route('admin.ordenes.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
-        <div class="col-md-8">
-            <div class="card card-primary card-outline">
+        <div class="col-md-4">
+            <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Detalle de la orden {{ $orden->numero_orden }}</h3>
+                    <h3 class="card-title">Información de la Orden</h3>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead>
+                    <p><strong>Estado:</strong> 
+                        <span class="badge badge-{{ $orden->status === 'completed' ? 'success' : ($orden->status === 'pending' ? 'warning' : 'secondary') }}">
+                            {{ ucfirst($orden->status) }}
+                        </span>
+                    </p>
+                    <p><strong>Total:</strong> ${{ number_format($orden->total_amount, 2) }}</p>
+                    <p><strong>Fecha:</strong> {{ $orden->created_at->format('d/m/Y H:i') }}</p>
+                    <hr>
+                    <p><strong>Usuario:</strong> {{ $orden->cart->user->name ?? 'N/A' }}</p>
+                    <p><strong>Email:</strong> {{ $orden->cart->user->email ?? 'N/A' }}</p>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h3 class="card-title">Pagos</h3>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Método</th>
+                                <th>Estado</th>
+                                <th>Ref</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($orden->payments as $payment)
                                 <tr>
-                                    <th>Producto</th>
-                                    <th>Proveedor</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio unitario</th>
-                                    <th>Subtotal</th>
+                                    <td>{{ $payment->payment_method }}</td>
+                                    <td>{{ ucfirst($payment->status) }}</td>
+                                    <td>{{ $payment->transaction_ref }}</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($orden->items as $item)
-                                    <tr>
-                                        <td>{{ $item->nombre ?? optional($item->producto)->nombre ?? 'N/A' }}</td>
-                                        <td>{{ optional($item->proveedor)->nombre ?? 'N/A' }}</td>
-                                        <td>{{ $item->cantidad }}</td>
-                                        <td>Bs {{ number_format((float) $item->precio_unitario, 2, ',', '.') }}</td>
-                                        <td>Bs {{ number_format((float) $item->subtotal, 2, ',', '.') }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center">No hay items en esta orden.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                            <tfoot>
+                            @empty
                                 <tr>
-                                    <th colspan="4" class="text-right">Subtotal:</th>
-                                    <th>Bs {{ number_format((float) $orden->subtotal, 2, ',', '.') }}</th>
+                                    <td colspan="3" class="text-center">No hay pagos registrados</td>
                                 </tr>
-                                <tr>
-                                    <th colspan="4" class="text-right">Impuestos:</th>
-                                    <th>Bs {{ number_format((float) $orden->impuestos, 2, ',', '.') }}</th>
-                                </tr>
-                                <tr>
-                                    <th colspan="4" class="text-right">Envío:</th>
-                                    <th>Bs {{ number_format((float) $orden->envio, 2, ',', '.') }}</th>
-                                </tr>
-                                <tr>
-                                    <th colspan="4" class="text-right">Total:</th>
-                                    <th>Bs {{ number_format((float) $orden->total, 2, ',', '.') }}</th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-info card-outline">
+
+        <div class="col-md-8">
+            <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Información</h3>
+                    <h3 class="card-title">Items de la Orden</h3>
                 </div>
-                <div class="card-body">
-                    <p><strong>Usuario:</strong> {{ optional($orden->usuario)->nombre ?? 'N/A' }}</p>
-                    <p><strong>Estado pago:</strong> 
-                        <span class="badge badge-{{ $orden->estado_pago === 'completado' ? 'success' : 'warning' }}">
-                            {{ ucfirst($orden->estado_pago) }}
-                        </span>
-                    </p>
-                    <p><strong>Estado envío:</strong> 
-                        <span class="badge badge-{{ $orden->estado_envio === 'entregado' ? 'success' : 'info' }}">
-                            {{ ucfirst($orden->estado_envio) }}
-                        </span>
-                    </p>
-                    <p><strong>Método pago:</strong> {{ ucfirst($orden->metodo_pago) }}</p>
-                    <p><strong>Fecha creación:</strong> {{ $orden->created_at->format('d/m/Y H:i') }}</p>
-                    @if ($orden->fecha_pago)
-                        <p><strong>Fecha pago:</strong> {{ $orden->fecha_pago->format('d/m/Y H:i') }}</p>
-                    @endif
-                    @if ($orden->contacto_nombre)
-                        <hr>
-                        <p><strong>Contacto:</strong> {{ $orden->contacto_nombre }}</p>
-                        <p><strong>Teléfono:</strong> {{ $orden->contacto_telefono }}</p>
-                        <p><strong>Email:</strong> {{ $orden->contacto_email }}</p>
-                    @endif
-                </div>
-                <div class="card-footer">
-                    <a href="{{ route('admin.ordenes.index') }}" class="btn btn-secondary">Volver</a>
-                    <a href="{{ route('admin.ordenes.edit', $orden) }}" class="btn btn-primary">Editar</a>
+                <div class="card-body p-0">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($orden->cart->items as $item)
+                                @php 
+                                    $subtotal = $item->quantity * ($item->product->price ?? 0);
+                                @endphp
+                                <tr>
+                                    <td>{{ $item->product->name ?? 'Producto Eliminado' }}</td>
+                                    <td>{{ $item->quantity }}</td>
+                                    <td>${{ number_format($item->product->price ?? 0, 2) }}</td>
+                                    <td>${{ number_format($subtotal, 2) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center">No hay items en esta orden</td>
+                                </tr>
+                            @endforelse
+                            <tr class="font-weight-bold">
+                                <td colspan="3" class="text-right">Total:</td>
+                                <td>${{ number_format($orden->total_amount, 2) }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-</x-layouts.admin>
-
+</div>
+@endsection

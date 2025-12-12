@@ -2,131 +2,108 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Domain\Lta\Models\Fundacion;
-use App\Domain\Lta\Models\Proveedor;
 use App\Domain\Lta\Models\Usuario;
-use Illuminate\Http\RedirectResponse;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Hash;
 
-class UsuarioController extends AdminController
+class UsuarioController extends Controller
 {
-    private const ROLES = ['admin', 'fundacion', 'proveedor', 'usuario'];
-    private const ROL_MODELS = ['Fundacion', 'Proveedor'];
-
-    public function index(): View
+    public function index(Request $request)
     {
-        $this->pageTitle = 'Usuarios';
-
-        $usuarios = Usuario::with(['fundacion', 'proveedor'])
-            ->orderByDesc('created_at')
-            ->paginate(15);
-
-        return view('admin.usuarios.index', $this->shareMeta([
-            'usuarios' => $usuarios,
-        ]));
+        $query = Usuario::query();
+        
+        // Filtrar por estado de aprobación si se solicita
+        if ($request->has('approval_status')) {
+            $query->where('approval_status', $request->approval_status);
+        }
+        
+        // Filtrar por rol si se solicita
+        if ($request->has('rol')) {
+            $query->where('rol', $request->rol);
+        }
+        
+        $usuarios = $query->orderBy('created_at', 'desc')->paginate(15);
+        $pageTitle = 'Usuarios';
+        
+        // Contar pendientes para notificación
+        $pendingCount = Usuario::where('approval_status', Usuario::STATUS_PENDING)->count();
+        
+        return view('admin.usuarios.index', compact('usuarios', 'pageTitle', 'pendingCount'));
     }
 
-    public function create(): View
+    public function create()
     {
-        $this->pageTitle = 'Nuevo usuario';
-
-        return view('admin.usuarios.create', $this->shareMeta([
-            'usuario' => new Usuario(),
-            'fundaciones' => Fundacion::orderBy('nombre')->get(),
-            'proveedores' => Proveedor::orderBy('nombre')->get(),
-            'roles' => self::ROLES,
-            'rolModels' => self::ROL_MODELS,
-        ]));
+        $pageTitle = 'Nuevo Usuario';
+        $usuario = new Usuario();
+        return view('admin.usuarios.create', compact('pageTitle', 'usuario'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        $data = $this->validatedData($request);
+        $validated = $request->validate([
+            'name' => 'required|string|max:120',
+            'email' => 'required|string|email|max:150|unique:test.users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
 
-        if (isset($data['password'])) {
-            $data['password_hash'] = bcrypt($data['password']);
-            unset($data['password']);
+        Usuario::create($validated);
+
+        return redirect()->route('admin.usuarios.index')
+            ->with('success', 'Usuario creado exitosamente.');
+    }
+
+    public function edit(Usuario $usuario)
+    {
+        $pageTitle = 'Editar Usuario';
+        return view('admin.usuarios.edit', compact('usuario', 'pageTitle'));
+    }
+
+    public function update(Request $request, Usuario $usuario)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:120',
+            'email' => 'required|string|email|max:150|unique:test.users,email,' . $usuario->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        if (empty($validated['password'])) {
+            unset($validated['password']);
         }
 
-        Usuario::create($data);
+        $usuario->update($validated);
 
-        return redirect()
-            ->route('admin.usuarios.index')
-            ->with('success', 'Usuario creado correctamente.');
+        return redirect()->route('admin.usuarios.index')
+            ->with('success', 'Usuario actualizado exitosamente.');
     }
 
-    public function edit(Usuario $usuario): View
+    public function destroy(Usuario $usuario)
     {
-        $this->pageTitle = 'Editar usuario';
-
-        return view('admin.usuarios.edit', $this->shareMeta([
-            'usuario' => $usuario,
-            'fundaciones' => Fundacion::orderBy('nombre')->get(),
-            'proveedores' => Proveedor::orderBy('nombre')->get(),
-            'roles' => self::ROLES,
-            'rolModels' => self::ROL_MODELS,
-        ]));
-    }
-
-    public function update(Request $request, Usuario $usuario): RedirectResponse
-    {
-        $data = $this->validatedData($request, $usuario->id);
-
-        if (isset($data['password']) && !empty($data['password'])) {
-            $data['password_hash'] = bcrypt($data['password']);
-        }
-        unset($data['password']);
-
-        $usuario->update($data);
-
-        return redirect()
-            ->route('admin.usuarios.index')
-            ->with('success', 'Usuario actualizado correctamente.');
-    }
-
-    public function destroy(Usuario $usuario): RedirectResponse
-    {
-        if ($usuario->carritos()->exists() || $usuario->ordenes()->exists()) {
-            return redirect()
-                ->route('admin.usuarios.index')
-                ->with('error', 'No se puede eliminar un usuario con carritos u órdenes asociadas.');
-        }
-
         $usuario->delete();
 
-        return redirect()
-            ->route('admin.usuarios.index')
-            ->with('success', 'Usuario eliminado correctamente.');
+        return redirect()->route('admin.usuarios.index')
+            ->with('success', 'Usuario eliminado exitosamente.');
     }
 
-    private function validatedData(Request $request, ?int $usuarioId = null): array
+    public function approve(Usuario $usuario)
     {
-        $rules = [
-            'nombre' => ['required', 'string', 'max:120'],
-            'email' => [
-                'required',
-                'email',
-                'max:120',
-                Rule::unique('usuario', 'email')->ignore($usuarioId),
-            ],
-            'rol' => ['required', Rule::in(self::ROLES)],
-            'fundacion_id' => ['nullable', 'exists:fundacion,id'],
-            'proveedor_id' => ['nullable', 'exists:proveedor,id'],
-            'rol_model' => ['nullable', Rule::in(self::ROL_MODELS)],
-            'activo' => ['nullable', 'boolean'],
-        ];
+        $usuario->update([
+            'approval_status' => Usuario::STATUS_APPROVED,
+            'activo' => true,
+        ]);
 
-        if ($request->isMethod('post') || !empty($request->input('password'))) {
-            $rules['password'] = ['required', 'string', 'min:8'];
-        }
+        return redirect()->route('admin.usuarios.index')
+            ->with('success', 'Usuario aprobado exitosamente.');
+    }
 
-        $data = $request->validate($rules);
+    public function reject(Usuario $usuario)
+    {
+        $usuario->update([
+            'approval_status' => Usuario::STATUS_REJECTED,
+            'activo' => false,
+        ]);
 
-        $data['activo'] = $request->boolean('activo');
-
-        return $data;
+        return redirect()->route('admin.usuarios.index')
+            ->with('success', 'Usuario rechazado exitosamente.');
     }
 }
-

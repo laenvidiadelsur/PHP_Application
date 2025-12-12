@@ -11,18 +11,21 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::orderBy('name')->paginate(15);
-        return view('admin.categories.index', compact('categories'));
+        $pageTitle = 'Categorías';
+        return view('admin.categories.index', compact('categories', 'pageTitle'));
     }
 
     public function create()
     {
-        return view('admin.categories.create');
+        $pageTitle = 'Nueva Categoría';
+        $category = new Category();
+        return view('admin.categories.create', compact('pageTitle', 'category'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:100|unique:test.categories,name',
+            'name' => 'required|string|max:100|unique:categories,name',
             'description' => 'nullable|string',
         ]);
 
@@ -34,13 +37,14 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        return view('admin.categories.edit', compact('category'));
+        $pageTitle = 'Editar Categoría';
+        return view('admin.categories.edit', compact('category', 'pageTitle'));
     }
 
     public function update(Request $request, Category $category)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:100|unique:test.categories,name,' . $category->id,
+            'name' => 'required|string|max:100|unique:categories,name,' . $category->id,
             'description' => 'nullable|string',
         ]);
 

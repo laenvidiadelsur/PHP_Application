@@ -3,6 +3,8 @@
 namespace App\Domain\Lta\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Proveedor extends Model
@@ -18,11 +20,34 @@ class Proveedor extends Model
         'phone',
         'address',
         'tax_id',
+        'fundacion_id',
+        'activo',
+        'estado',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
+        'activo' => 'boolean',
+        'estado' => 'string',
     ];
+
+    public function fundacion(): BelongsTo
+    {
+        return $this->belongsTo(Fundacion::class, 'fundacion_id');
+    }
+
+    /**
+     * Fundaciones a las que este proveedor puede proveer (relación muchos a muchos).
+     */
+    public function fundaciones(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Fundacion::class,
+            'test.foundation_supplier',
+            'supplier_id',
+            'foundation_id'
+        );
+    }
 
     public function productos(): HasMany
     {
