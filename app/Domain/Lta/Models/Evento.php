@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Evento extends Model
 {
-    protected $table = 'test.events';
+    protected $table = 'events';
 
     protected $fillable = [
         'name',

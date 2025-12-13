@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test.event_registrations', function (Blueprint $table) {
+        Schema::create('event_registrations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('test.users')->onDelete('cascade');
-            $table->foreignId('event_id')->constrained('test.events')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->enum('status', ['registered', 'cancelled', 'attended'])->default('registered');
             $table->timestamp('registered_at')->useCurrent();
             $table->timestamps();
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('test.event_registrations');
+        Schema::dropIfExists('event_registrations');
     }
 };

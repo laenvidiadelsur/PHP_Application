@@ -1,0 +1,54 @@
+services:
+  laravel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: e-donationapp-laravel
+    volumes:
+      - .:/var/www
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: db       # Nombre del servicio del contenedor de postgres
+      DB_PORT: 5432
+      DB_DATABASE: e_donationapp_db
+      DB_USERNAME: admin
+      DB_PASSWORD: admin123
+    depends_on:
+      - db
+    networks:
+      - e-donationapp-net
+  nginx:
+    image: nginx:latest
+    container_name: e-donationapp
+    ports:
+      - "7777:80" #---> despliegue local con puerto 7777
+    # Para producción, comentar ports y usar expose:
+    # expose:
+    #   - "80"
+    volumes:
+      - .:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - laravel
+    networks:
+      - e-donationapp-net
+  db:
+    image: postgres:latest
+    container_name: e-donationapp-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: e_donationapp_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    volumes:
+      - db-data:/var/lib/postgresql
+    networks:
+      - e-donationapp-net
+
+networks:
+  e-donationapp-net:
+    driver: bridge
+
+volumes:
+  db-data:
+

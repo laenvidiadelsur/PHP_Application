@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Producto extends Model
 {
-    protected $table = 'test.products';
+    protected $table = 'products';
 
     public $timestamps = false;
 

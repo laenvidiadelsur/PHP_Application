@@ -8,7 +8,7 @@ use App\Domain\Lta\Models\Evento;
 
 class EventRegistration extends Model
 {
-    protected $table = 'test.event_registrations';
+    protected $table = 'event_registrations';
 
     // Status constants
     const STATUS_REGISTERED = 'registered';

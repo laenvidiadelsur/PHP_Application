@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Carrito extends Model
 {
-    protected $table = 'test.carts';
+    protected $table = 'carts';
 
     protected $fillable = [
         'user_id',

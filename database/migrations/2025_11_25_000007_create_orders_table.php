@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test.orders', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cart_id')->constrained('test.carts')->onDelete('set null');
+            $table->foreignId('cart_id')->constrained('carts')->onDelete('set null');
             $table->decimal('total_amount', 12, 2)->check('total_amount >= 0');
             $table->string('status', 30)->default('pending');
             $table->timestampTz('created_at')->useCurrent();
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('test.orders');
+        Schema::dropIfExists('orders');
     }
 };

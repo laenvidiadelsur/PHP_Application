@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FoundationRating extends Model
 {
-    protected $table = 'test.foundation_ratings';
+    protected $table = 'foundation_ratings';
 
     protected $fillable = [
         'user_id',

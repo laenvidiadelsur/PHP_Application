@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('test.foundations', function (Blueprint $table) {
+        Schema::table('foundations', function (Blueprint $table) {
             $table->boolean('activa')->default(true);
         });
     }
@@ -20,7 +20,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('test.foundations', function (Blueprint $table) {
+        Schema::table('foundations', function (Blueprint $table) {
             $table->dropColumn('activa');
         });
     }

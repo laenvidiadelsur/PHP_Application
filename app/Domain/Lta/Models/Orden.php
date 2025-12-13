@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Orden extends Model
 {
-    protected $table = 'test.orders';
+    protected $table = 'orders';
 
     public $timestamps = false;
 

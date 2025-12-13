@@ -145,44 +145,44 @@ class ReporteController extends AdminController
     {
         // Consulta base de órdenes
         $queryOrdenes = Orden::query()
-            ->selectRaw('test.orders.*')
-            ->join('test.carts', 'test.orders.cart_id', '=', 'test.carts.id')
-            ->leftJoin('test.users', 'test.carts.user_id', '=', 'test.users.id')
-            ->leftJoin('test.suppliers', 'test.carts.supplier_id', '=', 'test.suppliers.id')
-            ->leftJoin('test.foundations', 'test.carts.foundation_id', '=', 'test.foundations.id');
+            ->selectRaw('orders.*')
+            ->join('carts', 'orders.cart_id', '=', 'carts.id')
+            ->leftJoin('users', 'carts.user_id', '=', 'users.id')
+            ->leftJoin('suppliers', 'carts.supplier_id', '=', 'suppliers.id')
+            ->leftJoin('foundations', 'carts.foundation_id', '=', 'foundations.id');
 
         // Aplicar filtros de fecha
         if (!empty($filtros['fecha_desde'])) {
-            $queryOrdenes->whereRaw("DATE(test.orders.created_at) >= ?", [$filtros['fecha_desde']]);
+            $queryOrdenes->whereRaw("DATE(orders.created_at) >= ?", [$filtros['fecha_desde']]);
         }
         if (!empty($filtros['fecha_hasta'])) {
-            $queryOrdenes->whereRaw("DATE(test.orders.created_at) <= ?", [$filtros['fecha_hasta']]);
+            $queryOrdenes->whereRaw("DATE(orders.created_at) <= ?", [$filtros['fecha_hasta']]);
         }
 
         // Aplicar filtros de fundación y proveedor
         if (!empty($filtros['fundacion_id'])) {
-            $queryOrdenes->where('test.carts.foundation_id', $filtros['fundacion_id']);
+            $queryOrdenes->where('carts.foundation_id', $filtros['fundacion_id']);
         }
         if (!empty($filtros['proveedor_id'])) {
-            $queryOrdenes->where('test.carts.supplier_id', $filtros['proveedor_id']);
+            $queryOrdenes->where('carts.supplier_id', $filtros['proveedor_id']);
         }
         if (!empty($filtros['estado_orden'])) {
-            $queryOrdenes->where('test.orders.estado', $filtros['estado_orden']);
+            $queryOrdenes->where('orders.estado', $filtros['estado_orden']);
         }
 
         // Consulta base de productos
         $queryProductos = Producto::query()
-            ->leftJoin('test.suppliers', 'test.products.supplier_id', '=', 'test.suppliers.id')
-            ->leftJoin('test.categories', 'test.products.category_id', '=', 'test.categories.id');
+            ->leftJoin('suppliers', 'products.supplier_id', '=', 'suppliers.id')
+            ->leftJoin('categories', 'products.category_id', '=', 'categories.id');
 
         if (!empty($filtros['categoria_id'])) {
-            $queryProductos->where('test.products.category_id', $filtros['categoria_id']);
+            $queryProductos->where('products.category_id', $filtros['categoria_id']);
         }
         if (!empty($filtros['proveedor_id'])) {
-            $queryProductos->where('test.products.supplier_id', $filtros['proveedor_id']);
+            $queryProductos->where('products.supplier_id', $filtros['proveedor_id']);
         }
         if (!empty($filtros['estado_producto'])) {
-            $queryProductos->where('test.products.estado', $filtros['estado_producto']);
+            $queryProductos->where('products.estado', $filtros['estado_producto']);
         }
 
         // Consulta base de proveedores
@@ -204,12 +204,12 @@ class ReporteController extends AdminController
         }
 
         return [
-            'total_ventas' => $queryOrdenes->sum('test.orders.total_amount') ?? 0,
+            'total_ventas' => $queryOrdenes->sum('orders.total_amount') ?? 0,
             'total_ordenes' => $queryOrdenes->count(),
-            'ordenes_completadas' => (clone $queryOrdenes)->where('test.orders.estado', 'completada')->count(),
-            'ordenes_pendientes' => (clone $queryOrdenes)->where('test.orders.estado', 'pendiente')->count(),
+            'ordenes_completadas' => (clone $queryOrdenes)->where('orders.estado', 'completada')->count(),
+            'ordenes_pendientes' => (clone $queryOrdenes)->where('orders.estado', 'pendiente')->count(),
             'total_productos' => $queryProductos->count(),
-            'productos_activos' => (clone $queryProductos)->where('test.products.estado', 'activo')->count(),
+            'productos_activos' => (clone $queryProductos)->where('products.estado', 'activo')->count(),
             'total_proveedores' => $queryProveedores->count(),
             'proveedores_activos' => (clone $queryProveedores)->where('activo', true)->count(),
             'total_fundaciones' => $queryFundaciones->count(),
@@ -221,36 +221,36 @@ class ReporteController extends AdminController
     {
         $query = Orden::query()
             ->select([
-                'test.orders.id',
-                'test.orders.total_amount',
-                'test.orders.estado',
-                'test.orders.created_at',
-                'test.users.name as usuario',
-                'test.suppliers.name as proveedor',
-                'test.foundations.name as fundacion',
+                'orders.id',
+                'orders.total_amount',
+                'orders.estado',
+                'orders.created_at',
+                'users.name as usuario',
+                'suppliers.name as proveedor',
+                'foundations.name as fundacion',
             ])
-            ->join('test.carts', 'test.orders.cart_id', '=', 'test.carts.id')
-            ->leftJoin('test.users', 'test.carts.user_id', '=', 'test.users.id')
-            ->leftJoin('test.suppliers', 'test.carts.supplier_id', '=', 'test.suppliers.id')
-            ->leftJoin('test.foundations', 'test.carts.foundation_id', '=', 'test.foundations.id');
+            ->join('carts', 'orders.cart_id', '=', 'carts.id')
+            ->leftJoin('users', 'carts.user_id', '=', 'users.id')
+            ->leftJoin('suppliers', 'carts.supplier_id', '=', 'suppliers.id')
+            ->leftJoin('foundations', 'carts.foundation_id', '=', 'foundations.id');
 
         if (!empty($filtros['fecha_desde'])) {
-            $query->whereRaw("DATE(test.orders.created_at) >= ?", [$filtros['fecha_desde']]);
+            $query->whereRaw("DATE(orders.created_at) >= ?", [$filtros['fecha_desde']]);
         }
         if (!empty($filtros['fecha_hasta'])) {
-            $query->whereRaw("DATE(test.orders.created_at) <= ?", [$filtros['fecha_hasta']]);
+            $query->whereRaw("DATE(orders.created_at) <= ?", [$filtros['fecha_hasta']]);
         }
         if (!empty($filtros['fundacion_id'])) {
-            $query->where('test.carts.foundation_id', $filtros['fundacion_id']);
+            $query->where('carts.foundation_id', $filtros['fundacion_id']);
         }
         if (!empty($filtros['proveedor_id'])) {
-            $query->where('test.carts.supplier_id', $filtros['proveedor_id']);
+            $query->where('carts.supplier_id', $filtros['proveedor_id']);
         }
         if (!empty($filtros['estado_orden'])) {
-            $query->where('test.orders.estado', $filtros['estado_orden']);
+            $query->where('orders.estado', $filtros['estado_orden']);
         }
 
-        $ordenes = $query->orderBy('test.orders.created_at', 'desc')->get();
+        $ordenes = $query->orderBy('orders.created_at', 'desc')->get();
 
         // Encabezados
         $sheet->setCellValue('A1', 'ID Orden');
@@ -300,28 +300,28 @@ class ReporteController extends AdminController
     {
         $query = Producto::query()
             ->select([
-                'test.products.id',
-                'test.products.name',
-                'test.products.price',
-                'test.products.stock',
-                'test.products.estado',
-                'test.categories.name as categoria',
-                'test.suppliers.name as proveedor',
+                'products.id',
+                'products.name',
+                'products.price',
+                'products.stock',
+                'products.estado',
+                'categories.name as categoria',
+                'suppliers.name as proveedor',
             ])
-            ->leftJoin('test.categories', 'test.products.category_id', '=', 'test.categories.id')
-            ->leftJoin('test.suppliers', 'test.products.supplier_id', '=', 'test.suppliers.id');
+            ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+            ->leftJoin('suppliers', 'products.supplier_id', '=', 'suppliers.id');
 
         if (!empty($filtros['categoria_id'])) {
-            $query->where('test.products.category_id', $filtros['categoria_id']);
+            $query->where('products.category_id', $filtros['categoria_id']);
         }
         if (!empty($filtros['proveedor_id'])) {
-            $query->where('test.products.supplier_id', $filtros['proveedor_id']);
+            $query->where('products.supplier_id', $filtros['proveedor_id']);
         }
         if (!empty($filtros['estado_producto'])) {
-            $query->where('test.products.estado', $filtros['estado_producto']);
+            $query->where('products.estado', $filtros['estado_producto']);
         }
 
-        $productos = $query->orderBy('test.products.name')->get();
+        $productos = $query->orderBy('products.name')->get();
 
         // Encabezados
         $sheet->setCellValue('A1', 'ID');
@@ -365,27 +365,27 @@ class ReporteController extends AdminController
     {
         $query = Proveedor::query()
             ->select([
-                'test.suppliers.id',
-                'test.suppliers.name',
-                'test.suppliers.email',
-                'test.suppliers.phone',
-                'test.suppliers.estado',
-                'test.suppliers.activo',
-                'test.foundations.name as fundacion',
+                'suppliers.id',
+                'suppliers.name',
+                'suppliers.email',
+                'suppliers.phone',
+                'suppliers.estado',
+                'suppliers.activo',
+                'foundations.name as fundacion',
             ])
-            ->leftJoin('test.foundations', 'test.suppliers.fundacion_id', '=', 'test.foundations.id');
+            ->leftJoin('foundations', 'suppliers.fundacion_id', '=', 'foundations.id');
 
         if (!empty($filtros['fundacion_id'])) {
-            $query->where('test.suppliers.fundacion_id', $filtros['fundacion_id']);
+            $query->where('suppliers.fundacion_id', $filtros['fundacion_id']);
         }
         if (!empty($filtros['estado_proveedor'])) {
-            $query->where('test.suppliers.estado', $filtros['estado_proveedor']);
+            $query->where('suppliers.estado', $filtros['estado_proveedor']);
         }
         if ($filtros['activo'] !== null) {
-            $query->where('test.suppliers.activo', $filtros['activo']);
+            $query->where('suppliers.activo', $filtros['activo']);
         }
 
-        $proveedores = $query->orderBy('test.suppliers.name')->get();
+        $proveedores = $query->orderBy('suppliers.name')->get();
 
         $sheet->setCellValue('A1', 'ID');
         $sheet->setCellValue('B1', 'Nombre');
@@ -517,36 +517,36 @@ class ReporteController extends AdminController
     {
         $query = Orden::query()
             ->select([
-                'test.orders.id',
-                'test.orders.total_amount',
-                'test.orders.estado',
-                'test.orders.created_at',
-                'test.users.name as usuario',
-                'test.suppliers.name as proveedor',
-                'test.foundations.name as fundacion',
+                'orders.id',
+                'orders.total_amount',
+                'orders.estado',
+                'orders.created_at',
+                'users.name as usuario',
+                'suppliers.name as proveedor',
+                'foundations.name as fundacion',
             ])
-            ->join('test.carts', 'test.orders.cart_id', '=', 'test.carts.id')
-            ->leftJoin('test.users', 'test.carts.user_id', '=', 'test.users.id')
-            ->leftJoin('test.suppliers', 'test.carts.supplier_id', '=', 'test.suppliers.id')
-            ->leftJoin('test.foundations', 'test.carts.foundation_id', '=', 'test.foundations.id');
+            ->join('carts', 'orders.cart_id', '=', 'carts.id')
+            ->leftJoin('users', 'carts.user_id', '=', 'users.id')
+            ->leftJoin('suppliers', 'carts.supplier_id', '=', 'suppliers.id')
+            ->leftJoin('foundations', 'carts.foundation_id', '=', 'foundations.id');
 
         if (!empty($filtros['fecha_desde'])) {
-            $query->whereRaw("DATE(test.orders.created_at) >= ?", [$filtros['fecha_desde']]);
+            $query->whereRaw("DATE(orders.created_at) >= ?", [$filtros['fecha_desde']]);
         }
         if (!empty($filtros['fecha_hasta'])) {
-            $query->whereRaw("DATE(test.orders.created_at) <= ?", [$filtros['fecha_hasta']]);
+            $query->whereRaw("DATE(orders.created_at) <= ?", [$filtros['fecha_hasta']]);
         }
         if (!empty($filtros['fundacion_id'])) {
-            $query->where('test.carts.foundation_id', $filtros['fundacion_id']);
+            $query->where('carts.foundation_id', $filtros['fundacion_id']);
         }
         if (!empty($filtros['proveedor_id'])) {
-            $query->where('test.carts.supplier_id', $filtros['proveedor_id']);
+            $query->where('carts.supplier_id', $filtros['proveedor_id']);
         }
         if (!empty($filtros['estado_orden'])) {
-            $query->where('test.orders.estado', $filtros['estado_orden']);
+            $query->where('orders.estado', $filtros['estado_orden']);
         }
 
-        $ordenes = $query->orderBy('test.orders.created_at', 'desc')->get();
+        $ordenes = $query->orderBy('orders.created_at', 'desc')->get();
 
         $html = '<table>
             <thead>
@@ -583,28 +583,28 @@ class ReporteController extends AdminController
     {
         $query = Producto::query()
             ->select([
-                'test.products.id',
-                'test.products.name',
-                'test.products.price',
-                'test.products.stock',
-                'test.products.estado',
-                'test.categories.name as categoria',
-                'test.suppliers.name as proveedor',
+                'products.id',
+                'products.name',
+                'products.price',
+                'products.stock',
+                'products.estado',
+                'categories.name as categoria',
+                'suppliers.name as proveedor',
             ])
-            ->leftJoin('test.categories', 'test.products.category_id', '=', 'test.categories.id')
-            ->leftJoin('test.suppliers', 'test.products.supplier_id', '=', 'test.suppliers.id');
+            ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+            ->leftJoin('suppliers', 'products.supplier_id', '=', 'suppliers.id');
 
         if (!empty($filtros['categoria_id'])) {
-            $query->where('test.products.category_id', $filtros['categoria_id']);
+            $query->where('products.category_id', $filtros['categoria_id']);
         }
         if (!empty($filtros['proveedor_id'])) {
-            $query->where('test.products.supplier_id', $filtros['proveedor_id']);
+            $query->where('products.supplier_id', $filtros['proveedor_id']);
         }
         if (!empty($filtros['estado_producto'])) {
-            $query->where('test.products.estado', $filtros['estado_producto']);
+            $query->where('products.estado', $filtros['estado_producto']);
         }
 
-        $productos = $query->orderBy('test.products.name')->get();
+        $productos = $query->orderBy('products.name')->get();
 
         $html = '<table>
             <thead>
@@ -641,27 +641,27 @@ class ReporteController extends AdminController
     {
         $query = Proveedor::query()
             ->select([
-                'test.suppliers.id',
-                'test.suppliers.name',
-                'test.suppliers.email',
-                'test.suppliers.phone',
-                'test.suppliers.estado',
-                'test.suppliers.activo',
-                'test.foundations.name as fundacion',
+                'suppliers.id',
+                'suppliers.name',
+                'suppliers.email',
+                'suppliers.phone',
+                'suppliers.estado',
+                'suppliers.activo',
+                'foundations.name as fundacion',
             ])
-            ->leftJoin('test.foundations', 'test.suppliers.fundacion_id', '=', 'test.foundations.id');
+            ->leftJoin('foundations', 'suppliers.fundacion_id', '=', 'foundations.id');
 
         if (!empty($filtros['fundacion_id'])) {
-            $query->where('test.suppliers.fundacion_id', $filtros['fundacion_id']);
+            $query->where('suppliers.fundacion_id', $filtros['fundacion_id']);
         }
         if (!empty($filtros['estado_proveedor'])) {
-            $query->where('test.suppliers.estado', $filtros['estado_proveedor']);
+            $query->where('suppliers.estado', $filtros['estado_proveedor']);
         }
         if ($filtros['activo'] !== null) {
-            $query->where('test.suppliers.activo', $filtros['activo']);
+            $query->where('suppliers.activo', $filtros['activo']);
         }
 
-        $proveedores = $query->orderBy('test.suppliers.name')->get();
+        $proveedores = $query->orderBy('suppliers.name')->get();
 
         $html = '<table>
             <thead>

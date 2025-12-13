@@ -34,8 +34,8 @@ class ProductoController extends Controller
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'estado' => 'required|string|max:30',
-            'supplier_id' => 'required|exists:test.suppliers,id',
-            'category_id' => 'nullable|exists:test.categories,id',
+            'supplier_id' => 'required|exists:suppliers,id',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         Producto::create($validated);
@@ -60,8 +60,8 @@ class ProductoController extends Controller
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'estado' => 'required|string|max:30',
-            'supplier_id' => 'required|exists:test.suppliers,id',
-            'category_id' => 'nullable|exists:test.categories,id',
+            'supplier_id' => 'required|exists:suppliers,id',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         $producto->update($validated);

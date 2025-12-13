@@ -15,9 +15,9 @@ return new class extends Migration {
         // But wait, previous migration added 'estado' but didn't drop 'status'.
         // Let's ensure data is synced and drop status.
         
-        DB::table('test.products')->update(['estado' => DB::raw('status')]);
+        DB::table('products')->update(['estado' => DB::raw('status')]);
         
-        Schema::table('test.products', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table) {
             $table->dropColumn('status');
         });
     }
@@ -27,10 +27,10 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('test.products', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table) {
             $table->string('status', 30)->default('active');
         });
         
-        DB::table('test.products')->update(['status' => DB::raw('estado')]);
+        DB::table('products')->update(['status' => DB::raw('estado')]);
     }
 };

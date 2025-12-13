@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Proveedor extends Model
 {
-    protected $table = 'test.suppliers';
+    protected $table = 'suppliers';
 
     public $timestamps = false;
 
@@ -43,7 +43,7 @@ class Proveedor extends Model
     {
         return $this->belongsToMany(
             Fundacion::class,
-            'test.foundation_supplier',
+            'foundation_supplier',
             'supplier_id',
             'foundation_id'
         );

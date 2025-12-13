@@ -11,7 +11,7 @@ use App\Domain\Lta\Models\Evento;
 
 class Usuario extends Authenticatable
 {
-    protected $table = 'test.users';
+    protected $table = 'users';
 
     protected $fillable = [
         'name',
@@ -76,7 +76,7 @@ class Usuario extends Authenticatable
 
     public function registeredEvents(): BelongsToMany
     {
-        return $this->belongsToMany(Evento::class, 'test.event_registrations', 'user_id', 'event_id')
+        return $this->belongsToMany(Evento::class, 'event_registrations', 'user_id', 'event_id')
             ->withPivot('status', 'registered_at')
             ->withTimestamps()
             ->orderBy('start_date', 'asc');

@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('test.foundation_supplier', function (Blueprint $table): void {
+        Schema::create('foundation_supplier', function (Blueprint $table): void {
             $table->unsignedBigInteger('foundation_id');
             $table->unsignedBigInteger('supplier_id');
 
@@ -16,19 +16,19 @@ return new class extends Migration
 
             $table->foreign('foundation_id')
                 ->references('id')
-                ->on('test.foundations')
+                ->on('foundations')
                 ->onDelete('cascade');
 
             $table->foreign('supplier_id')
                 ->references('id')
-                ->on('test.suppliers')
+                ->on('suppliers')
                 ->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('test.foundation_supplier');
+        Schema::dropIfExists('foundation_supplier');
     }
 };
 

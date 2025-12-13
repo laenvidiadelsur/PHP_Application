@@ -111,12 +111,12 @@ class DashboardController extends AdminController
             });
 
         // Top 5 Products by Sales
-        $topProductos = Producto::select('test.products.*')
+        $topProductos = Producto::select('products.*')
             ->selectSub(function ($query) {
-                $query->from('test.cart_items')
-                    ->join('test.carts', 'test.cart_items.cart_id', '=', 'test.carts.id')
-                    ->join('test.orders', 'test.carts.id', '=', 'test.orders.cart_id')
-                    ->whereColumn('test.cart_items.product_id', 'test.products.id')
+                $query->from('cart_items')
+                    ->join('carts', 'cart_items.cart_id', '=', 'carts.id')
+                    ->join('orders', 'carts.id', '=', 'orders.cart_id')
+                    ->whereColumn('cart_items.product_id', 'products.id')
                     ->selectRaw('COUNT(*)');
             }, 'sales_count')
             ->with('supplier')

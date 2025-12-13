@@ -44,19 +44,19 @@ class DashboardController extends Controller
             ->when($supplierFilter, function ($query) use ($supplierFilter) {
                 return $query->where('id', $supplierFilter);
             })
-            ->select('test.suppliers.*')
+            ->select('suppliers.*')
             ->selectSub(function ($query) use ($statusFilter) {
-                $subQuery = $query->from('test.products')
-                    ->join('test.cart_items', 'test.products.id', '=', 'test.cart_items.product_id')
-                    ->join('test.carts', 'test.cart_items.cart_id', '=', 'test.carts.id')
-                    ->join('test.orders', 'test.carts.id', '=', 'test.orders.cart_id')
-                    ->whereColumn('test.products.supplier_id', 'test.suppliers.id');
+                $subQuery = $query->from('products')
+                    ->join('cart_items', 'products.id', '=', 'cart_items.product_id')
+                    ->join('carts', 'cart_items.cart_id', '=', 'carts.id')
+                    ->join('orders', 'carts.id', '=', 'orders.cart_id')
+                    ->whereColumn('products.supplier_id', 'suppliers.id');
                 
                 if ($statusFilter) {
-                    $subQuery->where('test.orders.estado', $statusFilter);
+                    $subQuery->where('orders.estado', $statusFilter);
                 }
                 
-                return $subQuery->selectRaw('COUNT(DISTINCT test.orders.id)');
+                return $subQuery->selectRaw('COUNT(DISTINCT orders.id)');
             }, 'orders_count')
             ->orderByDesc('orders_count')
             ->limit(5)

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Fundacion extends Model
 {
-    protected $table = 'test.foundations';
+    protected $table = 'foundations';
 
     public $timestamps = false;
 

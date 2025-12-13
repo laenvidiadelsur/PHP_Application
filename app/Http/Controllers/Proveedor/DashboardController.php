@@ -58,14 +58,14 @@ class DashboardController extends Controller
             ->when($categoryFilter, function ($query) use ($categoryFilter) {
                 return $query->where('category_id', $categoryFilter);
             })
-            ->select('test.products.*')
+            ->select('products.*')
             ->selectSub(function ($query) use ($foundationFilter) {
-                $query->from('test.cart_items')
-                    ->join('test.carts', 'test.cart_items.cart_id', '=', 'test.carts.id')
-                    ->join('test.orders', 'test.carts.id', '=', 'test.orders.cart_id')
-                    ->whereColumn('test.cart_items.product_id', 'test.products.id')
+                $query->from('cart_items')
+                    ->join('carts', 'cart_items.cart_id', '=', 'carts.id')
+                    ->join('orders', 'carts.id', '=', 'orders.cart_id')
+                    ->whereColumn('cart_items.product_id', 'products.id')
                     ->when($foundationFilter, function ($q) use ($foundationFilter) {
-                        return $q->where('test.carts.foundation_id', $foundationFilter);
+                        return $q->where('carts.foundation_id', $foundationFilter);
                     })
                     ->selectRaw('COUNT(*)');
             }, 'sales_count')
@@ -93,13 +93,13 @@ class DashboardController extends Controller
                     });
             })
             ->whereHas('cart.order')
-            ->join('test.carts', 'test.cart_items.cart_id', '=', 'test.carts.id')
-            ->join('test.orders', 'test.carts.id', '=', 'test.orders.cart_id')
+            ->join('carts', 'cart_items.cart_id', '=', 'carts.id')
+            ->join('orders', 'carts.id', '=', 'orders.cart_id')
             ->when($foundationFilter, function ($query) use ($foundationFilter) {
-                return $query->where('test.carts.foundation_id', $foundationFilter);
+                return $query->where('carts.foundation_id', $foundationFilter);
             })
-            ->selectRaw('EXTRACT(YEAR FROM test.orders.created_at) as year, EXTRACT(MONTH FROM test.orders.created_at) as month, SUM(test.cart_items.quantity) as quantity')
-            ->whereBetween('test.orders.created_at', [$dateFrom, $dateTo])
+            ->selectRaw('EXTRACT(YEAR FROM orders.created_at) as year, EXTRACT(MONTH FROM orders.created_at) as month, SUM(cart_items.quantity) as quantity')
+            ->whereBetween('orders.created_at', [$dateFrom, $dateTo])
             ->groupBy('year', 'month')
             ->orderBy('year')
             ->orderBy('month')

@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test.carts', function (Blueprint $table) {
+        Schema::create('carts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('test.users')->onDelete('cascade');
-            $table->foreignId('supplier_id')->constrained('test.suppliers')->onDelete('cascade');
-            $table->foreignId('foundation_id')->nullable()->constrained('test.foundations')->onDelete('set null');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
+            $table->foreignId('foundation_id')->nullable()->constrained('foundations')->onDelete('set null');
             $table->timestampTz('created_at')->useCurrent();
             $table->timestampTz('updated_at')->useCurrent();
             
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('test.carts');
+        Schema::dropIfExists('carts');
     }
 };

@@ -27,7 +27,7 @@ class PaymentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'order_id' => 'required|exists:test.orders,id',
+            'order_id' => 'required|exists:orders,id',
             'payment_method' => 'required|string|max:50',
             'estado' => 'required|string|max:30',
             'transaction_ref' => 'nullable|string|max:120',
@@ -56,7 +56,7 @@ class PaymentController extends Controller
     public function update(Request $request, Payment $payment)
     {
         $validated = $request->validate([
-            'order_id' => 'required|exists:test.orders,id',
+            'order_id' => 'required|exists:orders,id',
             'payment_method' => 'required|string|max:50',
             'estado' => 'required|string|max:30',
             'transaction_ref' => 'nullable|string|max:120',

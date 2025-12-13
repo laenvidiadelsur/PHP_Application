@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test.products', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('supplier_id')->constrained('test.suppliers')->onDelete('cascade');
-            $table->foreignId('category_id')->nullable()->constrained('test.categories')->onDelete('set null');
+            $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->string('name', 150);
             $table->text('description')->nullable();
             $table->decimal('price', 12, 2)->check('price >= 0');
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('test.products');
+        Schema::dropIfExists('products');
     }
 };

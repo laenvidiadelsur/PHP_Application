@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('test.suppliers', function (Blueprint $table) {
+        Schema::table('suppliers', function (Blueprint $table) {
             $table->boolean('activo')->default(true);
             $table->string('estado')->default('pendiente'); // possible values: pendiente, aprobado, rechazado
         });
@@ -21,7 +21,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('test.suppliers', function (Blueprint $table) {
+        Schema::table('suppliers', function (Blueprint $table) {
             $table->dropColumn(['activo', 'estado']);
         });
     }

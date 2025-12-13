@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('test.foundation_votes', function (Blueprint $table) {
+        Schema::create('foundation_votes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('foundation_id');
@@ -16,12 +16,12 @@ return new class extends Migration
 
             $table->foreign('user_id')
                   ->references('id')
-                  ->on('test.users')
+                  ->on('users')
                   ->onDelete('cascade');
 
             $table->foreign('foundation_id')
                   ->references('id')
-                  ->on('test.foundations')
+                  ->on('foundations')
                   ->onDelete('cascade');
 
             // Ensure a user can only vote once per foundation
@@ -31,6 +31,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('test.foundation_votes');
+        Schema::dropIfExists('foundation_votes');
     }
 };

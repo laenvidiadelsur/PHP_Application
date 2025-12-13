@@ -30,7 +30,7 @@ class ProveedorController extends Controller
             'email' => 'nullable|string|email|max:150',
             'phone' => 'nullable|string|max:30',
             'address' => 'nullable|string|max:255',
-            'tax_id' => 'nullable|string|max:50|unique:test.suppliers,tax_id',
+            'tax_id' => 'nullable|string|max:50|unique:suppliers,tax_id',
         ]);
 
         Proveedor::create($validated);
@@ -53,7 +53,7 @@ class ProveedorController extends Controller
             'email' => 'nullable|string|email|max:150',
             'phone' => 'nullable|string|max:30',
             'address' => 'nullable|string|max:255',
-            'tax_id' => 'nullable|string|max:50|unique:test.suppliers,tax_id,' . $proveedor->id,
+            'tax_id' => 'nullable|string|max:50|unique:suppliers,tax_id,' . $proveedor->id,
         ]);
 
         $proveedor->update($validated);

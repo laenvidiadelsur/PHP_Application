@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FoundationVote extends Model
 {
-    protected $table = 'test.foundation_votes';
+    protected $table = 'foundation_votes';
     public $timestamps = false; // We only have created_at handled by DB or manually if needed, but migration uses timestamp('created_at')->useCurrent()
 
     protected $fillable = [
