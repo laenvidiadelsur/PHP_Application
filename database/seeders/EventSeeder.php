@@ -147,8 +147,7 @@ class EventSeeder extends Seeder
 
         foreach ($events as $eventData) {
             $eventData['foundation_id'] = $foundations->random()->id;
-            // La tabla requiere 'title', usar 'name' como 'title' también
-            $eventData['title'] = $eventData['name'];
+
             Evento::create($eventData);
         }
 

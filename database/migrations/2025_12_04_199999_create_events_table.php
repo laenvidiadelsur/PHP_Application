@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('capacity')->default(0);
             $table->enum('status', ['active', 'cancelled', 'completed'])->default('active');
             $table->string('image_url')->nullable();
+            $table->foreignId('foundation_id')->constrained('foundations')->onDelete('cascade');
             $table->timestamps();
         });
     }
