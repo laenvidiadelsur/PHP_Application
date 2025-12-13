@@ -21,10 +21,10 @@ services:
     image: nginx:latest
     container_name: e-donationapp
     ports:
-      - "7777:80" #---> despliegue local con puerto 7777
+       #- "7777:80" #---> despliegue local con puerto 7777
     # Para producción, comentar ports y usar expose:
-    # expose:
-    #   - "80"
+     expose:
+       - "80"
     volumes:
       - .:/var/www
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
