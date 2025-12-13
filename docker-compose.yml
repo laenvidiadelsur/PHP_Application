@@ -23,7 +23,7 @@ services:
    # ports:
        #- "7777:80" #---> despliegue local con puerto 7777
     # Para producción, comentar ports y usar expose:
-     expose:
+    expose:
        - "80"
     volumes:
       - .:/var/www
@@ -32,6 +32,8 @@ services:
       - laravel
     networks:
       - marketplace-net
+      - internal-network
+      - proxy-network
   db:
     image: postgres:latest
     container_name: marketplace-db
@@ -48,7 +50,11 @@ services:
 networks:
   marketplace-net:
     driver: bridge
-
+  internal-network:
+    external: true
+  proxy-network:
+    external: true
+    
 volumes:
   db-data:
 
