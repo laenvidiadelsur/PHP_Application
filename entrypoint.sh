@@ -20,7 +20,10 @@ php artisan key:generate --force || true
 echo "⚙️ Aplicando permisos..."
 chmod -R 777 storage bootstrap/cache
 
-echo "🗄️ Ejecutando migraciones..."
+echo "�️  Verificando esquema '$DB_SCHEMA'..."
+php database/create_schema.php
+
+echo "�🗄️ Ejecutando migraciones..."
 php artisan migrate --force || true
 
 echo "🌱 Ejecutando Seeder..."

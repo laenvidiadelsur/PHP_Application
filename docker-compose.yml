@@ -20,11 +20,11 @@ services:
   nginx:
     image: nginx:latest
     container_name: marketplace
-    # ports:
-    #- "7777:80" #---> despliegue local con puerto 7777
+    ports:
+      - "7777:80" #---> despliegue local con puerto 7777
     # Para producción, comentar ports y usar expose:
-    expose:
-      - "80"
+    #expose:
+    #- "80"
     volumes:
       - .:/var/www
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
