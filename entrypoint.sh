@@ -28,7 +28,19 @@ php artisan migrate --force || true
 
 echo "🌱 Ejecutando Seeder..."
 php artisan db:seed --force || true
+if [ ! -f public/build/manifest.json ]; then
+    echo "🎨 Compilando Vite (npm run build)..."
 
+    if command -v npm >/dev/null 2>&1; then
+        npm install
+        npm run build
+    else
+        echo "❌ npm NO está instalado dentro del contenedor."
+        echo "➡ Debes compilar Vite en tu host y copiar public/build"
+    fi
+else
+    echo "✔️ Vite build ya existe — no se compila"
+fi
 echo "🚀 Iniciando PHP-FPM..."
 exec php-fpm
 
