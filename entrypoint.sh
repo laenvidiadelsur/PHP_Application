@@ -20,8 +20,10 @@ php artisan key:generate --force || true
 echo "⚙️ Aplicando permisos..."
 chmod -R 777 storage bootstrap/cache
 
-echo "📁 Creando directorio de productos si no existe..."
+echo "📁 Creando directorios públicos si no existen..."
 mkdir -p storage/app/public/products
+mkdir -p storage/app/public/foundations
+mkdir -p storage/app/public/suppliers
 
 echo "🔗 Creando enlace simbólico de storage..."
 php artisan storage:link || true
