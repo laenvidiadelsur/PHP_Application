@@ -6,8 +6,12 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libpq-dev \
     libzip-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
     curl \
-    && docker-php-ext-install pdo pdo_pgsql zip
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_pgsql zip gd
 
 # 2. Instalar Node & NPM (última LTS)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
