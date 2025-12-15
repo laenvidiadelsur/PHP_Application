@@ -16,6 +16,76 @@
     @enderror
 </div>
 
+<div class="form-group">
+    <label for="image">Imagen del Producto</label>
+    <input type="file" class="form-control @error('image') is-invalid @enderror" 
+           id="image" name="image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+           onchange="previewImage(this)">
+    @error('image')
+        <div class="invalid-feedback d-block">{{ $message }}</div>
+    @enderror
+    @if(isset($producto) && $producto->image_url)
+        <div class="mt-2">
+            <img id="current-image" src="{{ asset('storage/' . $producto->image_url) }}" alt="{{ $producto->name }}" 
+                 class="img-thumbnail" style="max-width: 200px; max-height: 200px; display: block;">
+            <p class="text-muted small mt-1">Imagen actual</p>
+        </div>
+    @endif
+    <div id="image-preview" class="mt-2" style="display: none;">
+        <img id="preview-img" src="" alt="Vista previa" 
+             class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+        <p class="text-muted small mt-1">Vista previa de la nueva imagen</p>
+    </div>
+    <small class="form-text text-muted">
+        Formatos permitidos: JPEG, JPG, PNG, GIF, WEBP. Tamaño máximo: 5MB. Dimensiones: 100x100 a 5000x5000 píxeles.
+    </small>
+</div>
+
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    const currentImg = document.getElementById('current-image');
+    
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const maxSize = 5 * 1024 * 1024; // 5MB en bytes
+        
+        // Validar tamaño
+        if (file.size > maxSize) {
+            alert('La imagen es demasiado grande. El tamaño máximo es 5MB.');
+            input.value = '';
+            preview.style.display = 'none';
+            return;
+        }
+        
+        // Validar tipo
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            alert('Formato de imagen no válido. Use: JPEG, JPG, PNG, GIF o WEBP.');
+            input.value = '';
+            preview.style.display = 'none';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+            if (currentImg) {
+                currentImg.style.display = 'none';
+            }
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
+        if (currentImg) {
+            currentImg.style.display = 'block';
+        }
+    }
+}
+</script>
+
 <div class="row">
     <div class="col-md-6">
         <div class="form-group">

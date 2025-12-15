@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   @stack('styles')
 </head>
 <body class="hold-transition sidebar-mini">
@@ -88,6 +90,12 @@
             <a href="{{ route('proveedor.productos.index') }}" class="nav-link {{ request()->routeIs('proveedor.productos.*') ? 'active' : '' }}">
               <i class="nav-icon fas fa-boxes"></i>
               <p>Mis Productos</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('proveedor.ordenes.index') }}" class="nav-link {{ request()->routeIs('proveedor.ordenes.*') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-shopping-cart"></i>
+              <p>Mis Órdenes</p>
             </a>
           </li>
         </ul>

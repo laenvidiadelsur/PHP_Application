@@ -1,6 +1,6 @@
 @props(['fundacion', 'voted' => false, 'count' => 0])
 
-<div class="flex items-center gap-2" x-data="{ 
+<div class="flex items-center gap-2 flex-shrink-0" x-data="{ 
     voted: {{ $voted ? 'true' : 'false' }}, 
     count: {{ $count }},
     loading: false,

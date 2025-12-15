@@ -3,8 +3,14 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <!-- Product Image -->
             <div>
-                <div class="bg-gradient-to-br from-orange-100 to-amber-100 rounded-2xl p-12 flex items-center justify-center h-96">
+                <div class="bg-gradient-to-br from-orange-100 to-amber-100 rounded-2xl overflow-hidden flex items-center justify-center h-96">
+                    @if($producto->image_url)
+                        <img src="{{ asset('storage/' . $producto->image_url) }}" 
+                             alt="{{ $producto->name }}" 
+                             class="w-full h-full object-cover">
+                    @else
                     <span class="text-8xl">📦</span>
+                    @endif
                 </div>
             </div>
             
@@ -26,7 +32,7 @@
                 
                 <div class="mb-6">
                     <div class="text-4xl font-bold text-orange-600 mb-2">
-                        ${{ number_format($producto->price, 2) }}
+                        Bs {{ number_format($producto->price, 2) }}
                     </div>
                     <div class="text-sm text-gray-500">
                         Stock disponible: <span class="font-medium {{ $producto->stock < 10 ? 'text-red-600' : 'text-green-600' }}">{{ $producto->stock }} unidades</span>

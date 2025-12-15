@@ -40,7 +40,7 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                <span>{{ $event->start_date->format('d M, Y') }}</span>
+                                <span>{{ $event->start_date->format('d/m/Y') }}</span>
                             </div>
                             
                             <div class="flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-sm md:text-base font-medium">
@@ -119,7 +119,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-medium text-gray-500 mb-1">Fecha de Inicio</p>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $event->start_date->format('l, d F Y') }}</p>
+                                    <p class="text-lg font-semibold text-gray-900">{{ $event->start_date->locale('es')->translatedFormat('l, d \d\e F \d\e Y') }}</p>
                                     <p class="text-sm text-gray-600 mt-1">{{ $event->start_date->format('H:i') }} horas</p>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-medium text-gray-500 mb-1">Fecha de Finalización</p>
-                                    <p class="text-lg font-semibold text-gray-900">{{ $event->end_date->format('l, d F Y') }}</p>
+                                    <p class="text-lg font-semibold text-gray-900">{{ $event->end_date->locale('es')->translatedFormat('l, d \d\e F \d\e Y') }}</p>
                                     <p class="text-sm text-gray-600 mt-1">{{ $event->end_date->format('H:i') }} horas</p>
                                 </div>
                             </div>
@@ -247,13 +247,13 @@
                                 <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span>Duración: {{ $event->start_date->diffForHumans($event->end_date, true) }}</span>
+                                <span>Duración: {{ $event->start_date->locale('es')->diffForHumans($event->end_date, true) }}</span>
                             </li>
                             <li class="flex items-center gap-3 text-sm text-gray-700">
                                 <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                <span>Inicia: {{ $event->start_date->diffForHumans() }}</span>
+                                <span>Inicia: {{ $event->start_date->locale('es')->diffForHumans() }}</span>
                             </li>
                         </ul>
                     </div>

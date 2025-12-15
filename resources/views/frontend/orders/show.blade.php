@@ -39,7 +39,7 @@
                     </div>
                     <div>
                         <p class="text-gray-600">Total</p>
-                        <p class="font-medium text-gray-900 text-2xl">${{ number_format($orden->total_amount, 2) }}</p>
+                        <p class="font-medium text-gray-900 text-2xl">Bs {{ number_format($orden->total_amount, 2) }}</p>
                     </div>
                     @if($orden->cart->foundation)
                         <div>
@@ -65,7 +65,7 @@
                             <div class="flex-1">
                                 <h3 class="font-medium text-gray-900">{{ $item->product->name }}</h3>
                                 <p class="text-sm text-gray-600">
-                                    Cantidad: {{ $item->quantity }} × ${{ number_format($item->product->price, 2) }}
+                                    Cantidad: {{ $item->quantity }} × Bs {{ number_format($item->product->price, 2) }}
                                 </p>
                                 @if($item->product->supplier)
                                     <p class="text-xs text-gray-500 mt-1">
@@ -75,7 +75,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="font-medium text-gray-900">
-                                    ${{ number_format($item->quantity * $item->product->price, 2) }}
+                                    Bs {{ number_format($item->quantity * $item->product->price, 2) }}
                                 </p>
                             </div>
                         </div>

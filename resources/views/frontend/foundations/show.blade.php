@@ -72,14 +72,20 @@
                     <x-frontend.card>
                         <div class="relative group">
                             <div class="w-full h-48 bg-gray-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                                @if($product->image_url)
+                                    <img src="{{ asset('storage/' . $product->image_url) }}" 
+                                         alt="{{ $product->name }}" 
+                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                @else
                                 <span class="text-4xl group-hover:scale-110 transition-transform duration-300">📦</span>
+                                @endif
                             </div>
                             
                             <div class="mb-4">
                                 <p class="text-xs text-orange-600 font-medium mb-1">{{ $product->category->name ?? 'Sin categoría' }}</p>
                                 <h3 class="text-lg font-bold text-gray-900 mb-1">{{ $product->name }}</h3>
                                 <p class="text-sm text-gray-500 mb-2">Por: {{ $product->supplier->name ?? 'Proveedor desconocido' }}</p>
-                                <p class="text-xl font-bold text-gray-900">${{ number_format($product->price, 2) }}</p>
+                                <p class="text-xl font-bold text-gray-900">Bs {{ number_format($product->price, 2) }}</p>
                             </div>
 
                             <div class="flex flex-col gap-2">

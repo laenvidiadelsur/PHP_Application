@@ -73,7 +73,7 @@
                                 </div>
                                 <div class="text-gray-600 space-y-1">
                                     <p><strong>Fecha:</strong> {{ $orden->created_at->format('d/m/Y H:i') }}</p>
-                                    <p><strong>Total:</strong> ${{ number_format($orden->total_amount, 2) }}</p>
+                                    <p><strong>Total:</strong> Bs {{ number_format($orden->total_amount, 2) }}</p>
                                     @if($orden->cart->foundation)
                                         <p><strong>Fundación:</strong> {{ $orden->cart->foundation->name }}</p>
                                     @endif

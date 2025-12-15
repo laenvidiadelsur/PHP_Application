@@ -30,18 +30,24 @@
                         <div class="space-y-4">
                             @foreach($items as $item)
                                 <div class="flex items-center gap-4 pb-4 border-b last:border-0">
-                                    <div class="w-20 h-20 bg-gradient-to-br from-orange-100 to-amber-100 rounded-lg flex items-center justify-center">
+                                    <div class="w-20 h-20 bg-gradient-to-br from-orange-100 to-amber-100 rounded-lg flex items-center justify-center overflow-hidden">
+                                        @if($item['producto']->image_url)
+                                            <img src="{{ asset('storage/' . $item['producto']->image_url) }}" 
+                                                 alt="{{ $item['producto']->name }}" 
+                                                 class="w-full h-full object-cover">
+                                        @else
                                         <span class="text-3xl">📦</span>
+                                        @endif
                                     </div>
                                     <div class="flex-1">
                                         <h3 class="font-bold">{{ $item['producto']->name }}</h3>
-                                        <p class="text-sm text-gray-600">${{ number_format($item['price'], 2) }} c/u</p>
+                                        <p class="text-sm text-gray-600">Bs {{ number_format($item['price'], 2) }} c/u</p>
                                         <p class="text-xs text-gray-500 mt-1">
                                             Stock disponible: <span class="font-medium {{ $item['producto']->stock < 10 ? 'text-red-600' : 'text-green-600' }}">{{ $item['producto']->stock }}</span>
                                         </p>
                                     </div>
                                     <div class="text-right">
-                                        <div class="font-bold text-lg mb-2">${{ number_format($item['total'], 2) }}</div>
+                                        <div class="font-bold text-lg mb-2">Bs {{ number_format($item['total'], 2) }}</div>
                                         <div class="flex items-center gap-2">
                                             <input type="number" 
                                                    value="{{ $item['quantity'] }}" 
@@ -71,15 +77,15 @@
                         <div class="space-y-3 mb-6">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Subtotal:</span>
-                                <span class="font-medium">${{ number_format($subtotal, 2) }}</span>
+                                <span class="font-medium">Bs {{ number_format($subtotal, 2) }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Impuestos (15%):</span>
-                                <span class="font-medium">${{ number_format($tax, 2) }}</span>
+                                <span class="font-medium">Bs {{ number_format($tax, 2) }}</span>
                             </div>
                             <div class="flex justify-between text-xl font-bold pt-3 border-t">
                                 <span>Total:</span>
-                                <span class="text-orange-600">${{ number_format($total, 2) }}</span>
+                                <span class="text-orange-600">Bs {{ number_format($total, 2) }}</span>
                             </div>
                         </div>
                         <a href="{{ route('checkout.index') }}" class="block w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 text-center shadow-lg hover:shadow-xl">

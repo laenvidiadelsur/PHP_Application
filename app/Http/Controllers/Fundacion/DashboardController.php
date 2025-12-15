@@ -21,6 +21,13 @@ class DashboardController extends Controller
                 ->with('error', 'No tienes una fundación asociada.');
         }
 
+        // Si el usuario está aprobado pero la fundación no tiene información completa,
+        // redirigir al formulario de completado de información
+        if ($user->isApproved() && !$fundacion->hasCompleteInfo()) {
+            return redirect()->route('fundacion.complete-info')
+                ->with('info', 'Por favor, completa la información de tu fundación para continuar.');
+        }
+
         // Get filter parameters
         $dateFrom = request('date_from', now()->subDays(30)->format('Y-m-d'));
         $dateTo = request('date_to', now()->format('Y-m-d'));
@@ -141,7 +148,7 @@ class DashboardController extends Controller
         $completedOrders = \App\Domain\Lta\Models\Orden::whereHas('cart', function ($query) use ($fundacion) {
                 $query->where('foundation_id', $fundacion->id);
             })
-            ->where('estado', 'completado')
+            ->where('estado', 'completada')
             ->count();
 
         // Obtener lista de proveedores para el filtro

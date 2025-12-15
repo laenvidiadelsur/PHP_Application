@@ -46,20 +46,12 @@ class RegisterController extends Controller
         if ($validated['user_type'] === 'fundacion') {
             $request->validate([
                 'fundacion_name' => 'required|string|max:150',
-                'fundacion_mission' => 'nullable|string',
-                'fundacion_description' => 'nullable|string',
-                'fundacion_address' => 'nullable|string|max:255',
             ]);
         } elseif ($validated['user_type'] === 'proveedor') {
             $request->validate([
                 'proveedor_fundacion_ids' => 'required|array|min:1',
                 'proveedor_fundacion_ids.*' => 'required',
                 'proveedor_name' => 'required|string|max:150',
-                'proveedor_contact_name' => 'nullable|string|max:100',
-                'proveedor_email' => 'nullable|string|email|max:150',
-                'proveedor_phone' => 'nullable|string|max:30',
-                'proveedor_address' => 'nullable|string|max:255',
-                'proveedor_tax_id' => 'nullable|string|max:50',
             ]);
 
             // Validar que TODAS las fundaciones existen
@@ -91,38 +83,30 @@ class RegisterController extends Controller
         $proveedorId = null;
 
         if ($rol === Usuario::ROL_FUNDACION) {
-            // Crear nueva fundación
+            // Crear nueva fundación solo con el nombre básico
+            // La información adicional se completará en el stepper después de la aprobación
             $fundacion = Fundacion::create([
                 'name' => $request->input('fundacion_name'),
-                'mission' => $request->input('fundacion_mission'),
-                'description' => $request->input('fundacion_description'),
-                'address' => $request->input('fundacion_address'),
+                'mission' => null,
+                'description' => null,
+                'address' => null,
                 'verified' => false,
                 'activa' => true,
             ]);
             $fundacionId = $fundacion->id;
         } elseif ($rol === Usuario::ROL_PROVEEDOR) {
-            // Validar que el tax_id sea único si se proporciona
-            if ($request->filled('proveedor_tax_id')) {
-                $taxIdExists = DB::table((new Proveedor())->getTable())
-                    ->where('tax_id', $request->input('proveedor_tax_id'))
-                    ->exists();
-                if ($taxIdExists) {
-                    return back()->withErrors(['proveedor_tax_id' => 'El NIT/Tax ID ya está registrado.'])->withInput();
-                }
-            }
-
-            // Crear nuevo proveedor (asociando una fundación principal para compatibilidad)
+            // Crear nuevo proveedor solo con el nombre básico
+            // La información adicional se completará en el stepper después de la aprobación
             $principalFundacionId = $validFundacionIds[0] ?? null;
 
             $proveedor = Proveedor::create([
                 'fundacion_id' => $principalFundacionId,
                 'name' => $request->input('proveedor_name'),
-                'contact_name' => $request->input('proveedor_contact_name'),
-                'email' => $request->input('proveedor_email'),
-                'phone' => $request->input('proveedor_phone'),
-                'address' => $request->input('proveedor_address'),
-                'tax_id' => $request->input('proveedor_tax_id'),
+                'contact_name' => null,
+                'email' => null,
+                'phone' => null,
+                'address' => null,
+                'tax_id' => null,
                 'estado' => 'pendiente',
                 'activo' => true,
             ]);

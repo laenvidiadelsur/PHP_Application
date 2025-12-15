@@ -57,13 +57,19 @@
                 @foreach($productos as $producto)
                     <x-frontend.card>
                         <div class="text-center">
-                            <div class="w-full h-48 bg-gradient-to-br from-orange-100 to-amber-100 rounded-lg mb-4 flex items-center justify-center">
+                            <div class="w-full h-48 bg-gradient-to-br from-orange-100 to-amber-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                                @if($producto->image_url)
+                                    <img src="{{ asset('storage/' . $producto->image_url) }}" 
+                                         alt="{{ $producto->name }}" 
+                                         class="w-full h-full object-cover">
+                                @else
                                 <span class="text-4xl">📦</span>
+                                @endif
                             </div>
                             <h3 class="text-lg font-bold mb-2">{{ $producto->name }}</h3>
                             <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ Str::limit($producto->description, 80) }}</p>
                             <div class="flex items-center justify-between mb-4">
-                                <span class="text-2xl font-bold text-orange-600">${{ number_format($producto->price, 2) }}</span>
+                                <span class="text-2xl font-bold text-orange-600">Bs {{ number_format($producto->price, 2) }}</span>
                                 <span class="text-sm text-gray-500">Stock: {{ $producto->stock }}</span>
                             </div>
                             <div class="flex items-center justify-center gap-2 mb-4">

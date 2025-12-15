@@ -46,23 +46,25 @@ class BuyerDashboardController extends Controller
             ->take(10)
             ->get();
 
-        // Donation Goal Calculations
-        $monthlyGoal = 10000; // Monthly donation goal in dollars
+        // Donation Goal Calculations - Meta global (todas las órdenes)
+        $monthlyGoal = 10000; // Monthly donation goal in bolivianos
         
-        // Calculate total donations for current month (completed orders)
-        $currentMonthDonations = Orden::whereHas('cart', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })
-            ->where('estado', 'completado')
-            ->whereYear('created_at', now()->year)
-            ->whereMonth('created_at', now()->month)
-            ->sum('total_amount');
+        // Calculate total donations for current month (completed orders) - TODAS las órdenes, no solo del usuario
+        // Usa 'completada' que es el estado correcto en el sistema
+        // Usar whereBetween para asegurar que incluya todo el mes actual
+        $startOfMonth = now()->startOfMonth();
+        $endOfMonth = now()->endOfMonth();
+        
+        $currentMonthDonations = (float) (Orden::where('estado', 'completada')
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->sum('total_amount') ?? 0);
         
         // Calculate remaining amount
         $remainingAmount = max(0, $monthlyGoal - $currentMonthDonations);
         
         // Calculate percentage (capped at 100%)
-        $donationPercentage = min(100, ($currentMonthDonations / $monthlyGoal) * 100);
+        $donationPercentage = $monthlyGoal > 0 ? min(100, ($currentMonthDonations / $monthlyGoal) * 100) : 0;
+
 
         return view('frontend.buyer.dashboard', [
             'pageTitle' => 'Mi Panel',
@@ -73,10 +75,10 @@ class BuyerDashboardController extends Controller
                 'orders' => $activeOrders,
             ],
             'donationGoal' => [
-                'current' => $currentMonthDonations,
-                'goal' => $monthlyGoal,
-                'remaining' => $remainingAmount,
-                'percentage' => round($donationPercentage, 1),
+                'current' => (float) $currentMonthDonations,
+                'goal' => (float) $monthlyGoal,
+                'remaining' => (float) $remainingAmount,
+                'percentage' => (float) round($donationPercentage, 1),
             ],
             'topFoundations' => $topFoundations,
             'foundations' => $foundations,

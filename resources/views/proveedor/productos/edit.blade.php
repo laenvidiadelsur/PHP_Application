@@ -15,7 +15,7 @@
             <h3 class="card-title">{{ $pageTitle }}</h3>
         </div>
         <div class="card-body">
-            <form action="{{ route('proveedor.productos.update', $producto) }}" method="POST">
+            <form action="{{ route('proveedor.productos.update', $producto) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 @include('proveedor.productos._form', [

@@ -91,11 +91,11 @@
                                 <tr class="border-b">
                                     <td class="py-4 px-4">
                                         <div class="font-medium">{{ $item['producto']->name }}</div>
-                                        <div class="text-sm text-gray-500">${{ number_format($item['price'], 2) }} c/u</div>
+                                        <div class="text-sm text-gray-500">Bs {{ number_format($item['price'], 2) }} c/u</div>
                                     </td>
                                     <td class="text-center py-4 px-4">{{ $item['quantity'] }}</td>
-                                    <td class="text-right py-4 px-4">${{ number_format($item['price'], 2) }}</td>
-                                    <td class="text-right py-4 px-4 font-medium">${{ number_format($item['total'], 2) }}</td>
+                                    <td class="text-right py-4 px-4">Bs {{ number_format($item['price'], 2) }}</td>
+                                    <td class="text-right py-4 px-4 font-medium">Bs {{ number_format($item['total'], 2) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -105,15 +105,15 @@
                 <div class="mt-6 pt-6 border-t">
                     <div class="flex justify-between mb-2">
                         <span class="text-gray-600">Subtotal:</span>
-                        <span class="font-medium">${{ number_format($subtotal, 2) }}</span>
+                        <span class="font-medium">Bs {{ number_format($subtotal, 2) }}</span>
                     </div>
                     <div class="flex justify-between mb-2">
                         <span class="text-gray-600">Impuestos (15%):</span>
-                        <span class="font-medium">${{ number_format($tax, 2) }}</span>
+                        <span class="font-medium">Bs {{ number_format($tax, 2) }}</span>
                     </div>
                     <div class="flex justify-between text-xl font-bold pt-2 border-t">
                         <span>Total:</span>
-                        <span class="text-orange-600">${{ number_format($total, 2) }}</span>
+                        <span class="text-orange-600">Bs {{ number_format($total, 2) }}</span>
                     </div>
                 </div>
             </div>
@@ -247,7 +247,7 @@
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Total a pagar:</span>
-                            <span class="font-bold text-lg text-orange-600">${{ number_format($total, 2) }}</span>
+                            <span class="font-bold text-lg text-orange-600">Bs {{ number_format($total, 2) }}</span>
                         </div>
                     </div>
                 </div>

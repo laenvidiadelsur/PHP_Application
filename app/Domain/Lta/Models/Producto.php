@@ -16,6 +16,7 @@ class Producto extends Model
         'category_id',
         'name',
         'description',
+        'image_url',
         'price',
         'estado',
         'stock',

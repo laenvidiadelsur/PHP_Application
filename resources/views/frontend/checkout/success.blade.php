@@ -32,7 +32,7 @@
                     </div>
                     <div>
                         <span class="text-gray-600">Total:</span>
-                        <span class="font-bold text-orange-600 ml-2 text-xl">${{ number_format($orden->total_amount, 2) }}</span>
+                        <span class="font-bold text-orange-600 ml-2 text-xl">Bs {{ number_format($orden->total_amount, 2) }}</span>
                     </div>
                 </div>
             </div>
@@ -48,7 +48,7 @@
                                     <div class="text-sm text-gray-500">Cantidad: {{ $item->quantity }}</div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="font-medium">${{ number_format($item->product->price * $item->quantity, 2) }}</div>
+                                    <div class="font-medium">Bs {{ number_format($item->product->price * $item->quantity, 2) }}</div>
                                 </div>
                             </div>
                         @endforeach

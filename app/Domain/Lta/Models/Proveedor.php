@@ -58,4 +58,16 @@ class Proveedor extends Model
     {
         return $this->hasMany(Carrito::class, 'supplier_id');
     }
+
+    /**
+     * Verifica si el proveedor tiene información completa
+     */
+    public function hasCompleteInfo(): bool
+    {
+        return !empty($this->name) 
+            && !empty($this->contact_name) 
+            && !empty($this->email) 
+            && !empty($this->phone) 
+            && !empty($this->address);
+    }
 }

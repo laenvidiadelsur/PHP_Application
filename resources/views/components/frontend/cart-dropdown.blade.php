@@ -68,21 +68,27 @@
         
         <div class="p-4 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100 flex justify-between items-center">
             <h3 class="font-bold text-gray-800">Tu Carrito</h3>
-            <span class="text-sm text-gray-500">{{ count($cart) }} items</span>
+                            <span class="text-sm text-gray-500">{{ count($cart) }} artículos</span>
         </div>
 
         <div class="max-h-96 overflow-y-auto p-4 space-y-4">
             @if(count($cart) > 0)
                 @foreach($cart as $id => $details)
                     <div class="flex gap-4 items-start pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                        <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                            @if(!empty($details['image_url']))
+                                <img src="{{ asset('storage/' . $details['image_url']) }}" 
+                                     alt="{{ $details['name'] }}" 
+                                     class="w-full h-full object-cover">
+                            @else
                             <span class="text-2xl">📦</span>
+                            @endif
                         </div>
                         
                         <div class="flex-1">
                             <h4 class="font-bold text-gray-800 text-sm mb-1">{{ $details['name'] }}</h4>
                             <p class="text-xs text-gray-500 mb-2">
-                                ${{ number_format($details['price'], 2) }} unit.
+                                Bs {{ number_format($details['price'], 2) }} unidad
                             </p>
                             
                             <div class="flex items-center justify-between">
@@ -107,7 +113,7 @@
                         
                         <div class="text-right">
                             <p class="font-bold text-orange-600 text-sm">
-                                ${{ number_format($details['price'] * $details['quantity'], 2) }}
+                                Bs {{ number_format($details['price'] * $details['quantity'], 2) }}
                             </p>
                         </div>
                     </div>
@@ -124,7 +130,7 @@
             <div class="p-4 bg-gray-50 border-t border-gray-100">
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-gray-600 font-medium">Total</span>
-                    <span class="text-xl font-bold text-gray-900">${{ number_format($total, 2) }}</span>
+                    <span class="text-xl font-bold text-gray-900">Bs {{ number_format($total, 2) }}</span>
                 </div>
                 <a href="{{ route('cart.index') }}" class="block w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white text-center py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
                     Proceder al Pago

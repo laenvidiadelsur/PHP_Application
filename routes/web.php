@@ -78,9 +78,17 @@ Route::get('/reportes', [App\Http\Controllers\Frontend\ReportController::class, 
 
 // Fundación Dashboard Routes
 Route::middleware(['auth', 'can:access-fundacion'])->prefix('fundacion')->name('fundacion.')->group(function (): void {
+    Route::get('/complete-info', [App\Http\Controllers\Fundacion\CompleteInfoController::class, 'show'])->name('complete-info');
+    Route::post('/complete-info', [App\Http\Controllers\Fundacion\CompleteInfoController::class, 'store'])->name('complete-info.store');
     Route::get('/dashboard', [FundacionDashboardController::class, 'index'])->name('dashboard');
     Route::resource('proveedores', App\Http\Controllers\Fundacion\ProveedorController::class)
         ->parameters(['proveedores' => 'proveedor']);
+});
+
+// Proveedor Routes - Complete Info (sin middleware restrictivo para permitir acceso a usuarios aprobados sin info completa)
+Route::middleware('auth')->prefix('proveedor')->name('proveedor.')->group(function (): void {
+    Route::get('/complete-info', [App\Http\Controllers\Proveedor\CompleteInfoController::class, 'show'])->name('complete-info');
+    Route::post('/complete-info', [App\Http\Controllers\Proveedor\CompleteInfoController::class, 'store'])->name('complete-info.store');
 });
 
 // Proveedor Dashboard Routes
@@ -88,6 +96,9 @@ Route::middleware(['auth', 'can:access-proveedor'])->prefix('proveedor')->name('
     Route::get('/dashboard', [ProveedorDashboardController::class, 'index'])->name('dashboard');
     Route::resource('productos', App\Http\Controllers\Proveedor\ProductoController::class)
         ->parameters(['productos' => 'producto']);
+    Route::get('/ordenes', [App\Http\Controllers\Proveedor\OrdenController::class, 'index'])->name('ordenes.index');
+    Route::get('/ordenes/{orden}', [App\Http\Controllers\Proveedor\OrdenController::class, 'show'])->name('ordenes.show');
+    Route::put('/ordenes/{orden}/estado', [App\Http\Controllers\Proveedor\OrdenController::class, 'updateEstado'])->name('ordenes.update-estado');
 });
 
 // Authentication Routes

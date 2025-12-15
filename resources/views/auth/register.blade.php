@@ -125,7 +125,7 @@
                     <div x-show="userType === 'fundacion'" x-transition class="border-b pb-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Información de la Fundación</h3>
                         <p class="text-sm text-gray-600 mb-4">
-                            Complete los datos de su fundación. Se creará automáticamente y se relacionará con su cuenta una vez aprobada por el administrador.
+                            Ingresa el nombre básico de tu fundación. Una vez que tu solicitud sea aprobada por el administrador, podrás completar la información adicional (misión, descripción y dirección) mediante un formulario guiado.
                         </p>
                         
                         <div>
@@ -138,41 +138,11 @@
                                    value="{{ old('fundacion_name') }}" 
                                    x-show="userType === 'fundacion'"
                                    x-bind:required="userType === 'fundacion'"
+                                   placeholder="Ej: Fundación Ayuda Social"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="fundacion_mission" class="block text-sm font-medium text-gray-700 mb-2">
-                                Misión
-                            </label>
-                            <textarea id="fundacion_mission" 
-                                      name="fundacion_mission" 
-                                      rows="3"
-                                      x-show="userType === 'fundacion'"
-                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">{{ old('fundacion_mission') }}</textarea>
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="fundacion_description" class="block text-sm font-medium text-gray-700 mb-2">
-                                Descripción
-                            </label>
-                            <textarea id="fundacion_description" 
-                                      name="fundacion_description" 
-                                      rows="3"
-                                      x-show="userType === 'fundacion'"
-                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">{{ old('fundacion_description') }}</textarea>
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="fundacion_address" class="block text-sm font-medium text-gray-700 mb-2">
-                                Dirección
-                            </label>
-                            <input type="text" 
-                                   id="fundacion_address" 
-                                   name="fundacion_address" 
-                                   value="{{ old('fundacion_address') }}" 
-                                   x-show="userType === 'fundacion'"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                            <small class="text-gray-500 mt-1 block">
+                                La información adicional se completará después de la aprobación.
+                            </small>
                         </div>
                     </div>
 
@@ -180,7 +150,7 @@
                     <div x-show="userType === 'proveedor'" x-transition class="border-b pb-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Información del Proveedor</h3>
                         <p class="text-sm text-gray-600 mb-4">
-                            Complete los datos de su proveedor. Se creará automáticamente y se relacionará con su cuenta una vez aprobada por el administrador.
+                            Ingresa el nombre básico de tu proveedor y selecciona las fundaciones a las que proveerás. Una vez que tu solicitud sea aprobada por el administrador, podrás completar la información adicional (contacto, email, teléfono, dirección, NIT) mediante un formulario guiado.
                         </p>
                         
                         <div>
@@ -215,67 +185,11 @@
                                    value="{{ old('proveedor_name') }}" 
                                    x-show="userType === 'proveedor'"
                                    x-bind:required="userType === 'proveedor'"
+                                   placeholder="Ej: Proveedora ABC S.A."
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="proveedor_contact_name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Nombre de Contacto
-                            </label>
-                            <input type="text" 
-                                   id="proveedor_contact_name" 
-                                   name="proveedor_contact_name" 
-                                   value="{{ old('proveedor_contact_name') }}" 
-                                   x-show="userType === 'proveedor'"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="proveedor_email" class="block text-sm font-medium text-gray-700 mb-2">
-                                Email del Proveedor
-                            </label>
-                            <input type="email" 
-                                   id="proveedor_email" 
-                                   name="proveedor_email" 
-                                   value="{{ old('proveedor_email') }}" 
-                                   x-show="userType === 'proveedor'"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="proveedor_phone" class="block text-sm font-medium text-gray-700 mb-2">
-                                Teléfono
-                            </label>
-                            <input type="text" 
-                                   id="proveedor_phone" 
-                                   name="proveedor_phone" 
-                                   value="{{ old('proveedor_phone') }}" 
-                                   x-show="userType === 'proveedor'"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="proveedor_address" class="block text-sm font-medium text-gray-700 mb-2">
-                                Dirección
-                            </label>
-                            <input type="text" 
-                                   id="proveedor_address" 
-                                   name="proveedor_address" 
-                                   value="{{ old('proveedor_address') }}" 
-                                   x-show="userType === 'proveedor'"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        </div>
-
-                        <div class="mt-4">
-                            <label for="proveedor_tax_id" class="block text-sm font-medium text-gray-700 mb-2">
-                                NIT / Tax ID
-                            </label>
-                            <input type="text" 
-                                   id="proveedor_tax_id" 
-                                   name="proveedor_tax_id" 
-                                   value="{{ old('proveedor_tax_id') }}" 
-                                   x-show="userType === 'proveedor'"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                            <small class="text-gray-500 mt-1 block">
+                                La información adicional se completará después de la aprobación.
+                            </small>
                         </div>
                     </div>
 

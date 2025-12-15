@@ -70,7 +70,7 @@
                                 </div>
                                 
                                 <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold text-purple-600 shadow-sm">
-                                    {{ $event->start_date->format('d M') }}
+                                    {{ $event->start_date->format('d/m') }}
                                 </div>
 
                                 <h3 class="text-xl font-bold mb-3 group-hover:text-purple-600 transition-colors">{{ $event->name }}</h3>

@@ -45,4 +45,15 @@ class Fundacion extends Model
     {
         return $this->votes()->where('user_id', $userId)->exists();
     }
+
+    /**
+     * Verifica si la fundación tiene información completa
+     */
+    public function hasCompleteInfo(): bool
+    {
+        return !empty($this->name) 
+            && !empty($this->mission) 
+            && !empty($this->description) 
+            && !empty($this->address);
+    }
 }

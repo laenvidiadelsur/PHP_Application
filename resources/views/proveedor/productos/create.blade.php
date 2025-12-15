@@ -15,7 +15,7 @@
             <h3 class="card-title">{{ $pageTitle }}</h3>
         </div>
         <div class="card-body">
-            <form action="{{ route('proveedor.productos.store') }}" method="POST">
+            <form action="{{ route('proveedor.productos.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @include('proveedor.productos._form', [
                     'producto' => $producto,

@@ -172,7 +172,7 @@
                         <div id="donation-goal-chart" class="relative">
                             <div class="absolute inset-0 flex items-center justify-center">
                                 <div class="text-center">
-                                    <div class="text-4xl font-bold text-gray-900">{{ number_format($donationGoal['percentage'] ?? 0, 0) }}%</div>
+                                    <div class="text-4xl font-bold text-gray-900">{{ number_format($percentage ?? 0, 0) }}%</div>
                                     <div class="text-sm text-gray-500 mt-1">Completado</div>
                                 </div>
                             </div>
@@ -184,18 +184,45 @@
                         <h2 class="text-3xl font-bold text-gray-900 mb-2">Meta de Donaciones 🎯</h2>
                         <p class="text-gray-600 mb-6">Ayúdanos a alcanzar nuestra meta mensual de donaciones para apoyar a más fundaciones</p>
                         
+                        @php
+                            // Asegurar que donationGoal existe y tiene valores
+                            if (!isset($donationGoal) || !is_array($donationGoal)) {
+                                // Si no existe, calcular directamente
+                                $startOfMonth = \Carbon\Carbon::now()->startOfMonth();
+                                $endOfMonth = \Carbon\Carbon::now()->endOfMonth();
+                                $monthlyGoal = 10000;
+                                
+                                $currentMonthDonations = (float) (\App\Domain\Lta\Models\Orden::where('estado', 'completada')
+                                    ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                                    ->sum('total_amount') ?? 0);
+                                
+                                $remainingAmount = max(0, $monthlyGoal - $currentMonthDonations);
+                                $donationPercentage = $monthlyGoal > 0 ? min(100, ($currentMonthDonations / $monthlyGoal) * 100) : 0;
+                                
+                                $current = $currentMonthDonations;
+                                $goal = $monthlyGoal;
+                                $remaining = $remainingAmount;
+                                $percentage = round($donationPercentage, 1);
+                            } else {
+                                $current = isset($donationGoal['current']) ? (float) $donationGoal['current'] : 0;
+                                $goal = isset($donationGoal['goal']) ? (float) $donationGoal['goal'] : 10000;
+                                $remaining = isset($donationGoal['remaining']) ? (float) $donationGoal['remaining'] : max(0, $goal - $current);
+                                $percentage = isset($donationGoal['percentage']) ? (float) $donationGoal['percentage'] : ($goal > 0 ? min(100, ($current / $goal) * 100) : 0);
+                            }
+                        @endphp
+                        
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                             <div class="bg-white rounded-xl p-4 shadow-sm">
                                 <div class="text-sm text-gray-500 mb-1">Recaudado</div>
-                                <div class="text-2xl font-bold text-orange-600">${{ number_format($donationGoal['current'] ?? 0, 0) }}</div>
+                                <div class="text-2xl font-bold text-orange-600">Bs {{ number_format($current, 2) }}</div>
                             </div>
                             <div class="bg-white rounded-xl p-4 shadow-sm">
                                 <div class="text-sm text-gray-500 mb-1">Meta</div>
-                                <div class="text-2xl font-bold text-gray-900">${{ number_format($donationGoal['goal'] ?? 10000, 0) }}</div>
+                                <div class="text-2xl font-bold text-gray-900">Bs {{ number_format($goal, 2) }}</div>
                             </div>
                             <div class="bg-white rounded-xl p-4 shadow-sm">
                                 <div class="text-sm text-gray-500 mb-1">Restante</div>
-                                <div class="text-2xl font-bold text-red-600">${{ number_format($donationGoal['remaining'] ?? 10000, 0) }}</div>
+                                <div class="text-2xl font-bold text-red-600">Bs {{ number_format($remaining, 2) }}</div>
                             </div>
                         </div>
                         
@@ -221,15 +248,15 @@
                     
                     <div class="space-y-4">
                         @foreach($topFoundations as $index => $foundation)
-                            <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                            <div class="flex items-center gap-3 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100 overflow-hidden">
                                 <div class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-br {{ $index == 0 ? 'from-yellow-100 to-amber-100 text-yellow-600' : ($index == 1 ? 'from-gray-100 to-slate-200 text-gray-600' : ($index == 2 ? 'from-orange-100 to-red-100 text-orange-600' : 'from-gray-50 to-gray-100 text-gray-400')) }}">
                                     <span class="font-bold text-lg">#{{ $index + 1 }}</span>
                                 </div>
-                                <div class="flex-grow">
-                                    <h3 class="font-semibold text-gray-900">{{ $foundation->name }}</h3>
+                                <div class="flex-1 min-w-0 overflow-hidden">
+                                    <h3 class="font-semibold text-gray-900 truncate mb-1">{{ $foundation->name }}</h3>
                                     <p class="text-sm text-gray-500 truncate">{{ $foundation->mission ?? 'Sin misión definida' }}</p>
                                 </div>
-                                <div class="flex-shrink-0">
+                                <div class="flex-shrink-0 flex items-center ml-2">
                                     <x-frontend.vote-button :fundacion="$foundation" :voted="$foundation->isVotedByUser($user->id)" :count="$foundation->votes_count" />
                                 </div>
                             </div>
@@ -261,7 +288,7 @@
                                     </div>
                                     <div class="flex justify-between items-center text-sm">
                                         <span class="text-gray-600">{{ $order->items->count() }} ítems</span>
-                                        <span class="font-bold text-gray-900">${{ number_format($order->total, 2) }}</span>
+                                        <span class="font-bold text-gray-900">Bs {{ number_format($order->total, 2) }}</span>
                                     </div>
                                 </div>
                             @empty
@@ -269,7 +296,7 @@
                                     <p>No hay pedidos recientes</p>
                                 </div>
                             @endforelse
-                            <!-- Duplicate for seamless loop if enough items -->
+                            <!-- Duplicado para bucle continuo si hay suficientes artículos -->
                             @if($recentOrders->count() > 3)
                                 @foreach($recentOrders as $order)
                                     <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 hover:bg-orange-50 transition-colors group">
@@ -298,7 +325,7 @@
                                         </div>
                                         <div class="flex justify-between items-center text-sm">
                                             <span class="text-gray-600">{{ $order->items->count() }} ítems</span>
-                                            <span class="font-bold text-gray-900">${{ number_format($order->total, 2) }}</span>
+                                            <span class="font-bold text-gray-900">Bs {{ number_format($order->total, 2) }}</span>
                                         </div>
                                     </div>
                                 @endforeach
@@ -420,7 +447,7 @@
                         }
                     }
                 },
-                series: [{{ $donationGoal['percentage'] ?? 0 }}],
+                series: [{{ $percentage ?? 0 }}],
                 colors: ['#ea580c'],
                 stroke: {
                     lineCap: 'round'

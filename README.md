@@ -2,6 +2,49 @@
 
 Proyecto Laravel enfocado en la administración de licencias de tránsito (LTA) con panel dedicado y dominio LTA modular.
 
+### 🐳 Despliegue Local con Docker
+
+Para desplegar el proyecto localmente usando Docker:
+
+1. **Asegúrate de tener Docker y Docker Compose instalados**
+
+2. **Construir y levantar los contenedores:**
+   ```bash
+   docker-compose up -d --build
+   ```
+
+3. **Acceder a la aplicación:**
+   - La aplicación estará disponible en: `http://localhost:7777`
+   - La base de datos PostgreSQL estará disponible en el puerto `5432`
+
+4. **Ver los logs:**
+   ```bash
+   docker-compose logs -f laravel
+   ```
+
+5. **Detener los contenedores:**
+   ```bash
+   docker-compose down
+   ```
+
+6. **Detener y eliminar volúmenes (incluyendo la base de datos):**
+   ```bash
+   docker-compose down -v
+   ```
+
+**Nota:** El script `entrypoint.sh` se ejecutará automáticamente al iniciar el contenedor y:
+- Creará el archivo `.env` si no existe (desde `.env.example`)
+- Instalará las dependencias de Composer
+- Generará la APP_KEY
+- Ejecutará las migraciones
+- Ejecutará los seeders
+- Compilará los assets de Vite (si es necesario)
+
+**Servicios Docker:**
+- `marketplace-laravel`: Contenedor PHP-FPM con Laravel
+- `marketplace`: Contenedor Nginx (puerto 7777)
+- `marketplace-db`: Contenedor PostgreSQL (puerto 5432)
+
 ### Requisitos
 - PHP 8.2+ con extensión `pdo_pgsql`
 - Composer y Node.js (v18+ recomendado)

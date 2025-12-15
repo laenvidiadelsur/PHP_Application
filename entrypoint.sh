@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Salir si algún comando falla
-set -e
+# No salir si algún comando falla (para permitir que PHP-FPM se inicie incluso si hay errores menores)
+set +e
 
 # Crear .env si no existe
 if [ ! -f .env ]; then
@@ -27,7 +27,7 @@ echo "�🗄️ Ejecutando migraciones..."
 php artisan migrate --force || true
 
 echo "🌱 Ejecutando Seeder..."
-php artisan db:seed --force || true
+php artisan db:seed --force || echo "⚠️ Seeder falló o no hay seeders, continuando..."
 if [ ! -f public/build/manifest.json ]; then
     echo "🎨 Compilando Vite (npm run build)..."
 
