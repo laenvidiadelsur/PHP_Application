@@ -80,7 +80,7 @@ class CompleteInfoController extends Controller
         $fundacionesAsociadas = $proveedor->fundaciones()->get();
         $todasFundaciones = Fundacion::where('activa', true)->orderBy('name')->get();
 
-        return view('proveedor.complete-info', [
+        return view('proveedor.settings', [
             'proveedor' => $proveedor,
             'fundacionesAsociadas' => $fundacionesAsociadas,
             'todasFundaciones' => $todasFundaciones,

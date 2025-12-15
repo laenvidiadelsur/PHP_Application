@@ -45,7 +45,7 @@ class CompleteInfoController extends Controller
                 ->with('error', 'No tienes una fundación asociada.');
         }
 
-        return view('fundacion.complete-info', [
+        return view('fundacion.settings', [
             'fundacion' => $fundacion,
             'pageTitle' => 'Ajustes de Fundación',
         ]);
