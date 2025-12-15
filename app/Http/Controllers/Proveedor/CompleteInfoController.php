@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CompleteInfoController extends Controller
 {
@@ -84,6 +85,7 @@ class CompleteInfoController extends Controller
             'tax_id' => 'nullable|string|max:50',
             'fundacion_ids' => 'required|array|min:1',
             'fundacion_ids.*' => 'required|exists:foundations,id',
+            'image' => 'nullable|image|max:2048',
         ], [
             'name.required' => 'El nombre del proveedor es obligatorio.',
             'contact_name.required' => 'El nombre de contacto es obligatorio.',
@@ -92,6 +94,8 @@ class CompleteInfoController extends Controller
             'address.required' => 'La dirección es obligatoria.',
             'fundacion_ids.required' => 'Debes seleccionar al menos una fundación.',
             'fundacion_ids.min' => 'Debes seleccionar al menos una fundación.',
+            'image.image' => 'El archivo debe ser una imagen válida.',
+            'image.max' => 'La imagen no debe superar los 2MB.',
         ]);
 
         // Validar que el tax_id sea único si se proporciona
@@ -105,8 +109,7 @@ class CompleteInfoController extends Controller
             }
         }
 
-        // Actualizar información del proveedor
-        $proveedor->update([
+        $updateData = [
             'name' => $validated['name'],
             'contact_name' => $validated['contact_name'],
             'email' => $validated['email'],
@@ -114,7 +117,34 @@ class CompleteInfoController extends Controller
             'address' => $validated['address'],
             'tax_id' => $validated['tax_id'] ?? null,
             'fundacion_id' => $validated['fundacion_ids'][0] ?? null, // Fundación principal
-        ]);
+        ];
+
+        // Manejar imagen si se envía
+        if ($request->hasFile('image')) {
+            if (!$request->file('image')->isValid()) {
+                return back()->withErrors(['image' => 'Error al subir la imagen.'])->withInput();
+            }
+
+            if (!Storage::disk('public')->exists('suppliers')) {
+                Storage::disk('public')->makeDirectory('suppliers');
+            }
+
+            if ($proveedor->image_url && Storage::disk('public')->exists($proveedor->image_url)) {
+                Storage::disk('public')->delete($proveedor->image_url);
+            }
+
+            $imageName = time() . '_' . uniqid() . '.' . $request->file('image')->getClientOriginalExtension();
+            $imagePath = $request->file('image')->storeAs('suppliers', $imageName, 'public');
+
+            if (!$imagePath) {
+                return back()->withErrors(['image' => 'No se pudo guardar la imagen.'])->withInput();
+            }
+
+            $updateData['image_url'] = $imagePath;
+        }
+
+        // Actualizar información del proveedor (incluye image_url si se cargó)
+        $proveedor->update($updateData);
 
         // Sincronizar fundaciones
         $proveedor->fundaciones()->sync($validated['fundacion_ids']);

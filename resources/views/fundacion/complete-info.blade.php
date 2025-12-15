@@ -64,7 +64,7 @@
                     </div>
                 </div>
 
-                <form action="{{ route('fundacion.complete-info.store') }}" method="POST" id="fundacion-form">
+                <form action="{{ route('fundacion.complete-info.store') }}" method="POST" id="fundacion-form" enctype="multipart/form-data">
                     @csrf
 
                     <!-- Step 1: Información Básica -->
@@ -205,6 +205,23 @@
                             <i class="fas fa-check-circle text-primary mr-2"></i>
                             Paso 4: Revisar y Finalizar
                         </h4>
+
+                        <div class="form-group mb-4">
+                            <label for="image">
+                                Logo / Imagen de la Fundación <span class="text-muted">(Opcional)</span>
+                            </label>
+                            <input type="file"
+                                   class="form-control-file @error('image') is-invalid @enderror"
+                                   id="image"
+                                   name="image"
+                                   accept="image/*">
+                            @error('image')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                            <small class="form-text text-muted">
+                                Se usará como avatar de la fundación (máx. 2MB).
+                            </small>
+                        </div>
                         
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle mr-2"></i>

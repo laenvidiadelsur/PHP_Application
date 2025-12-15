@@ -19,6 +19,7 @@ class Proveedor extends Model
         'email',
         'phone',
         'address',
+        'image_url',
         'tax_id',
         'fundacion_id',
         'activo',

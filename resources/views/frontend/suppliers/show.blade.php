@@ -4,8 +4,14 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-12">
             <div class="flex flex-col md:flex-row gap-8 items-start">
                 <div class="w-full md:w-1/3">
-                    <div class="aspect-square bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center">
-                        <span class="text-8xl">🏪</span>
+                    <div class="aspect-square bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center overflow-hidden">
+                        @if($proveedor->image_url)
+                            <img src="{{ asset('storage/' . $proveedor->image_url) }}"
+                                 alt="{{ $proveedor->name }}"
+                                 class="w-full h-full object-cover">
+                        @else
+                            <span class="text-8xl">🏪</span>
+                        @endif
                     </div>
                 </div>
                 <div class="w-full md:w-2/3">

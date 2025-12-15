@@ -16,6 +16,7 @@ class Fundacion extends Model
         'mission',
         'description',
         'address',
+        'image_url',
         'verified',
         'activa',
     ];
