@@ -58,7 +58,7 @@ if [ ! -f public/build/manifest.json ]; then
         npm run build
     else
         echo "❌ npm NO está instalado dentro del contenedor."
-        echo "➡ Debes compilar Vite en tu host y copiar public/build"
+            echo "➡ Debes compilar Vite en tu host y copiar public/build"
     fi
 else
     echo "✔️ Vite build ya existe — no se compila"

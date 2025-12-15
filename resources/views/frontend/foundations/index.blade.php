@@ -48,8 +48,14 @@
                                 </div>
                             @endauth
 
-                            <div class="w-full h-48 bg-gradient-to-br from-orange-100 to-amber-100 rounded-lg mb-4 flex items-center justify-center">
-                                <span class="text-5xl">🏢</span>
+                            <div class="w-full h-48 bg-gradient-to-br from-orange-100 to-amber-100 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                                @if($fundacion->image_url)
+                                    <img src="{{ asset('storage/' . $fundacion->image_url) }}"
+                                         alt="{{ $fundacion->name }}"
+                                         class="w-full h-full object-cover">
+                                @else
+                                    <span class="text-5xl">🏢</span>
+                                @endif
                             </div>
                             <h3 class="text-xl font-bold mb-2 pr-8">{{ $fundacion->name }}</h3>
                             @if($fundacion->mission)
