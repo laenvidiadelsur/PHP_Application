@@ -18,7 +18,7 @@ echo "🔑 Generando APP_KEY (si no existe)..."
 php artisan key:generate --force || true
 
 echo "⚙️ Aplicando permisos..."
-chmod -R 777 storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
 
 echo "📁 Creando directorios públicos si no existen..."
 mkdir -p storage/app/public/products
@@ -28,10 +28,11 @@ mkdir -p storage/app/public/suppliers
 echo "🔗 Creando enlace simbólico de storage..."
 php artisan storage:link || true
 
-echo "🔐 Asegurando permisos de lectura para Nginx..."
-# Asegurar que Nginx pueda leer los archivos: 755 para directorios, 644 para archivos
-find storage/app/public -type d -exec chmod 755 {} \;
-find storage/app/public -type f -exec chmod 644 {} \;
+echo "🔐 Asegurando permisos de escritura/lectura en storage público..."
+# Directorios 775 (lectura/ejecución para todos, escritura para dueño/grupo)
+find storage/app/public -type d -exec chmod 775 {} \;
+# Archivos 664 (lectura para todos, escritura dueño/grupo)
+find storage/app/public -type f -exec chmod 664 {} \;
 
 echo "�️  Verificando esquema '$DB_SCHEMA'..."
 php database/create_schema.php
