@@ -18,7 +18,15 @@ echo "🔑 Generando APP_KEY (si no existe)..."
 php artisan key:generate --force || true
 
 echo "⚙️ Aplicando permisos..."
+# Dar propiedad a www-data (Nginx/PHP-FPM) para evitar problemas de escritura
+chown -R www-data:www-data storage bootstrap/cache
+# Permisos de escritura para dueño/grupo; lectura para otros
 chmod -R 775 storage bootstrap/cache
+# Asegurar permisos específicos en logs y framework (incluye vistas compiladas)
+find storage/logs -type d -exec chmod 775 {} \; 2>/dev/null
+find storage/logs -type f -exec chmod 664 {} \; 2>/dev/null
+find storage/framework -type d -exec chmod 775 {} \; 2>/dev/null
+find storage/framework -type f -exec chmod 664 {} \; 2>/dev/null
 
 echo "📁 Creando directorios públicos si no existen..."
 mkdir -p storage/app/public/products
