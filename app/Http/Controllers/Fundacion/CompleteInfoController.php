@@ -32,6 +32,25 @@ class CompleteInfoController extends Controller
         ]);
     }
 
+    /**
+     * Formulario de ajustes para editar la información ya cargada.
+     */
+    public function settings()
+    {
+        $user = Auth::user();
+        $fundacion = $user->fundacion;
+
+        if (!$fundacion) {
+            return redirect()->route('home')
+                ->with('error', 'No tienes una fundación asociada.');
+        }
+
+        return view('fundacion.complete-info', [
+            'fundacion' => $fundacion,
+            'pageTitle' => 'Ajustes de Fundación',
+        ]);
+    }
+
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -88,6 +107,14 @@ class CompleteInfoController extends Controller
 
         return redirect()->route('fundacion.dashboard')
             ->with('success', 'Información de la fundación completada exitosamente.');
+    }
+
+    /**
+     * Actualizar desde ajustes (misma lógica que store pero accesible siempre).
+     */
+    public function updateSettings(Request $request)
+    {
+        return $this->store($request);
     }
 }
 

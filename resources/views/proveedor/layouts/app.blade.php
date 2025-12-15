@@ -41,6 +41,10 @@
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <span class="dropdown-item dropdown-header">{{ auth()->user()->name ?? 'Usuario' }}</span>
           <div class="dropdown-divider"></div>
+          <a href="{{ route('proveedor.settings') }}" class="dropdown-item">
+            <i class="fas fa-cog mr-2"></i> Ajustes
+          </a>
+          <div class="dropdown-divider"></div>
           <form method="POST" action="{{ route('logout') }}" class="d-inline">
             @csrf
             <button type="submit" class="dropdown-item dropdown-footer">

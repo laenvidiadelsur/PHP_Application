@@ -53,6 +53,41 @@ class CompleteInfoController extends Controller
         ]);
     }
 
+    /**
+     * Formulario de ajustes para editar la información ya cargada.
+     */
+    public function settings()
+    {
+        $user = Auth::user();
+        
+        if (!$user->isProveedor()) {
+            return redirect()->route('home')
+                ->with('error', 'No tienes acceso a esta sección.');
+        }
+        
+        if (!$user->isApproved()) {
+            return redirect()->route('home')
+                ->with('error', 'Tu cuenta está pendiente de aprobación.');
+        }
+        
+        $proveedor = $user->proveedor;
+
+        if (!$proveedor) {
+            return redirect()->route('home')
+                ->with('error', 'No tienes un proveedor asociado.');
+        }
+
+        $fundacionesAsociadas = $proveedor->fundaciones()->get();
+        $todasFundaciones = Fundacion::where('activa', true)->orderBy('name')->get();
+
+        return view('proveedor.complete-info', [
+            'proveedor' => $proveedor,
+            'fundacionesAsociadas' => $fundacionesAsociadas,
+            'todasFundaciones' => $todasFundaciones,
+            'pageTitle' => 'Ajustes del Proveedor',
+        ]);
+    }
+
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -151,6 +186,14 @@ class CompleteInfoController extends Controller
 
         return redirect()->route('proveedor.dashboard')
             ->with('success', 'Información del proveedor completada exitosamente.');
+    }
+
+    /**
+     * Actualizar desde ajustes (misma lógica que store pero accesible siempre).
+     */
+    public function updateSettings(Request $request)
+    {
+        return $this->store($request);
     }
 }
 

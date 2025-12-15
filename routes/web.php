@@ -80,6 +80,8 @@ Route::get('/reportes', [App\Http\Controllers\Frontend\ReportController::class, 
 Route::middleware(['auth', 'can:access-fundacion'])->prefix('fundacion')->name('fundacion.')->group(function (): void {
     Route::get('/complete-info', [App\Http\Controllers\Fundacion\CompleteInfoController::class, 'show'])->name('complete-info');
     Route::post('/complete-info', [App\Http\Controllers\Fundacion\CompleteInfoController::class, 'store'])->name('complete-info.store');
+    Route::get('/ajustes', [App\Http\Controllers\Fundacion\CompleteInfoController::class, 'settings'])->name('settings');
+    Route::post('/ajustes', [App\Http\Controllers\Fundacion\CompleteInfoController::class, 'updateSettings'])->name('settings.update');
     Route::get('/dashboard', [FundacionDashboardController::class, 'index'])->name('dashboard');
     Route::resource('proveedores', App\Http\Controllers\Fundacion\ProveedorController::class)
         ->parameters(['proveedores' => 'proveedor']);
@@ -89,6 +91,8 @@ Route::middleware(['auth', 'can:access-fundacion'])->prefix('fundacion')->name('
 Route::middleware('auth')->prefix('proveedor')->name('proveedor.')->group(function (): void {
     Route::get('/complete-info', [App\Http\Controllers\Proveedor\CompleteInfoController::class, 'show'])->name('complete-info');
     Route::post('/complete-info', [App\Http\Controllers\Proveedor\CompleteInfoController::class, 'store'])->name('complete-info.store');
+    Route::get('/ajustes', [App\Http\Controllers\Proveedor\CompleteInfoController::class, 'settings'])->name('settings');
+    Route::post('/ajustes', [App\Http\Controllers\Proveedor\CompleteInfoController::class, 'updateSettings'])->name('settings.update');
 });
 
 // Proveedor Dashboard Routes
