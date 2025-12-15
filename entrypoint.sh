@@ -20,6 +20,17 @@ php artisan key:generate --force || true
 echo "⚙️ Aplicando permisos..."
 chmod -R 777 storage bootstrap/cache
 
+echo "📁 Creando directorio de productos si no existe..."
+mkdir -p storage/app/public/products
+
+echo "🔗 Creando enlace simbólico de storage..."
+php artisan storage:link || true
+
+echo "🔐 Asegurando permisos de lectura para Nginx..."
+# Asegurar que Nginx pueda leer los archivos: 755 para directorios, 644 para archivos
+find storage/app/public -type d -exec chmod 755 {} \;
+find storage/app/public -type f -exec chmod 644 {} \;
+
 echo "�️  Verificando esquema '$DB_SCHEMA'..."
 php database/create_schema.php
 
